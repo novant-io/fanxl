@@ -95,6 +95,7 @@ const class Fanxl
     data.elems.each |xr|
     {
       row := SheetRow {
+        it.sheet = sheet
         it.index = xr.attr("r").val.toInt
       }
 

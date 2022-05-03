@@ -47,26 +47,5 @@ class Sheet
     return acc
   }
 
-  ** Map the given row index to a 'Str:Str?' map where the map
-  ** keys are the column values for `rows[0]`.
-  Str:Str? rowToMap(Int row)
-  {
-    if (row == 0) throw ArgErr("Cannot map row 0")
-    if (row >= rows.size) throw ArgErr("Invalid row: ${row}")
-
-    cols := rows[0].cells
-    vals := rows[row].cells
-
-    map := Str:Str[:] { it.ordered=true }
-    cols.each |c,i|
-    {
-      k := c.val
-      v := vals.getSafe(i)?.val
-      map[k] = v
-    }
-
-    return map
-  }
-
   override Str toStr() { "${sheetId}:${name}" }
 }
