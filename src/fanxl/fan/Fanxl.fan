@@ -112,7 +112,7 @@ const class Fanxl
             row.cells.add(cell)
 
           default:
-            cell := SheetCell { it.val="TODO" }
+            cell := SheetCell { it.val="" }
             row.cells.add(cell)
         }
       }
@@ -121,6 +121,6 @@ const class Fanxl
     }
 
     // trim trailing empty rows
-    while (sheet.rows.last.cells.isEmpty) sheet.rows.pop
+    while (sheet.rows.last.isEmpty) sheet.rows.pop
   }
 }

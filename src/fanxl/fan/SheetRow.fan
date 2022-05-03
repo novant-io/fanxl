@@ -20,8 +20,15 @@ class SheetRow
   ** Index of this row in parent sheet.
   Int index
 
-  ** Cells for this row.s
+  ** Cells for this rows.
   SheetCell[] cells := [,]
+
+  ** A row is empty if `cells` is empty for every value for `cells` is empty.
+  Bool isEmpty()
+  {
+    if (cells.isEmpty) return true
+    return cells.all |c| { c.val === "" }
+  }
 
   override Str toStr() { cells.join(", ") }
 }
