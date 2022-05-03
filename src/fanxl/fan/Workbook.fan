@@ -19,4 +19,10 @@ class Workbook
 
   ** The sheets for this workbook.
   Sheet[] sheets := [,]
+
+  ** Get sheet with given 'name' or 'null' if none found.
+  Sheet? sheet(Str name)
+  {
+    sheets.find |s| { s.name == name }
+  }
 }
