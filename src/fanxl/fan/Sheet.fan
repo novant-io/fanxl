@@ -32,9 +32,24 @@ class Sheet
   ** Rows for this sheet.
   SheetRow[] rows := SheetRow[,]
 
+  ** Create a new list which is the result of calling 'f' for
+  ** every row (excluding header) in this sheet.
+  Obj[] mapRows(|SheetRow row, Int index->Obj| f)
+  {
+    acc := Obj[,]
+    if (rows.size > 1)
+    {
+      rows.eachRange(1..-1) |r,i|
+      {
+        acc.add(f(r,i))
+      }
+    }
+    return acc
+  }
+
   ** Map the given row index to a 'Str:Str?' map where the map
   ** keys are the column values for `rows[0]`.
-  Str:Str? mapRow(Int row)
+  Str:Str? rowToMap(Int row)
   {
     if (row == 0) throw ArgErr("Cannot map row 0")
     if (row >= rows.size) throw ArgErr("Invalid row: ${row}")
