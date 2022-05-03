@@ -32,7 +32,7 @@ class Sheet
   ** Rows for this sheet.
   SheetRow[] rows := SheetRow[,]
 
-  ** Map the given row index to a 'Str:Str' map where the map
+  ** Map the given row index to a 'Str:Str?' map where the map
   ** keys are the column values for `rows[0]`.
   Str:Str? mapRow(Int row)
   {
