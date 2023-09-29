@@ -20,5 +20,16 @@ class SheetCell
   ** Cell value
   Str val
 
+  ** Get cell value as 'DateTime'
+  DateTime datetime(TimeZone tz := TimeZone.utc)
+  {
+    ser  := val.toFloat - 39448f
+    orig := Date(2008, Month.jan, 1).midnight(tz)
+    days := Duration("${ser}day")
+    fan  := orig + days
+    // TODO: round/clamp to nearest min
+    return fan
+  }
+
   override Str toStr() { val }
 }

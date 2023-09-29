@@ -41,7 +41,7 @@ class SheetRow
     cols := sheet.rows[0].cells
     vals := sheet.rows[index-1].cells
 
-    map := Str:Str[:] { it.ordered=true }
+    map := Str:Str?[:] { it.ordered=true }
     cols.each |c,i|
     {
       k := c.val
