@@ -118,7 +118,8 @@ if (sheet == null) return
             row.cells.add(cell)
 
           default:
-            cell := SheetCell { it.val="" }
+            val  := xc.elems.first?.text?.val ?: ""
+            cell := SheetCell { it.val=val }
             row.cells.add(cell)
         }
       }
