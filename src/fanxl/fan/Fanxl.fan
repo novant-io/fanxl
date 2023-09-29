@@ -47,6 +47,8 @@ const class Fanxl
     {
       t := k.elems.first
       s := t.children.first as XText
+// TODO <si><r>...
+if (s == null) return
       sst.add(i, s.val)
     }
   }
@@ -79,7 +81,10 @@ const class Fanxl
       if (file.name.startsWith("sheet") && file.ext == "xml")
       {
         sheetId := file.name[5..-5]
-        sheet   := book.sheets.find |s| { s.sheetId == sheetId } ?: throw ArgErr("Sheet not found '${sheetId}'")
+        sheet   := book.sheets.find |s| { s.sheetId == sheetId }
+        //if (sheet == null) throw ArgErr("Sheet not found '${sheetId}'")
+// TODO
+if (sheet == null) return
         readSheet(file, sheet, sst)
       }
     }
@@ -108,7 +113,7 @@ const class Fanxl
           case "s":
             // shared string
             sid  := xc.elems.first.text.val.toInt
-            val  := sst[sid]
+            val  := sst[sid] ?: "X" // TODO
             cell := SheetCell { it.val=val }
             row.cells.add(cell)
 
