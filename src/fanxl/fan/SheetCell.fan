@@ -20,9 +20,17 @@ class SheetCell
   ** Cell value
   Str val
 
-  ** Get cell value as 'DateTime'
-  DateTime datetime(TimeZone tz := TimeZone.utc)
+  ** Get cell value as 'Float' or return 'null' if cell was empty.
+  Float? float()
   {
+    if (val.isEmpty) return null
+    return val.toFloat
+  }
+
+  ** Get cell value as 'DateTime'
+  DateTime? datetime(TimeZone tz := TimeZone.utc)
+  {
+    if (val.isEmpty) return null
     ser  := val.toFloat - 39448f
     orig := Date(2008, Month.jan, 1).midnight(tz)
     days := Duration("${ser}day")
