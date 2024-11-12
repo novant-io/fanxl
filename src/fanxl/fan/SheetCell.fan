@@ -35,9 +35,18 @@ class SheetCell
     orig := Date(2008, Month.jan, 1).midnight(tz)
     days := Duration("${ser}day")
     fan  := orig + days
-    // TODO: round/clamp to nearest min
-    return fan
+
+    // this convesion introduces some rounding errors
+    // at the nanosecond level, so round to nearest
+    // whole second
+    floor := (fan.ticks / oneSecTicks) * oneSecTicks
+    rem   := fan.ticks % oneSecTicks
+    if (rem > 500ms.ticks) floor += 1sec.ticks
+
+    return DateTime.makeTicks(floor, fan.tz)
   }
 
   override Str toStr() { val }
+
+  private static const Int oneSecTicks := 1sec.ticks
 }
