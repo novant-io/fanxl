@@ -97,17 +97,26 @@ if (sheet == null) return
     root := doc.root
 
     data := root.elems.find |e| { e.name == "sheetData" }
-    data.elems.each |xr|
+    data.elems.each |xr,i|
     {
       row := SheetRow {
         it.sheet = sheet
         it.index = xr.attr("r").val.toInt
       }
-
+      // track last cix to backfill sparse cells
+      lastcix := -1
       xr.elems.each |xc|
       {
         ref  := xc.attr("r").val
         type := xc.attr("t", false)?.val
+
+        // backfill empty/sparse columns if needed
+        cix  := Util.cellRefToColIndex(ref)
+        miss := cix - lastcix
+        while (miss-- > 1) row.cells.add(SheetCell { it.val="" })
+        lastcix = cix
+
+        // read value based on type
         switch (type)
         {
           case "s":
