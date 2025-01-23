@@ -122,7 +122,7 @@ if (sheet == null) return
           case "s":
             // shared string
             sid  := xc.elems.first.text.val.toInt
-            val  := sst[sid] ?: "X" // TODO
+            val  := sst[sid] ?: "" // TODO
             cell := SheetCell { it.val=val }
             row.cells.add(cell)
 
