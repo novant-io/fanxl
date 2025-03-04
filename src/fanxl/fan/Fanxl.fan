@@ -17,7 +17,10 @@ const class Fanxl
   ** Read the given file and return a `Workbook` instance.
   static Workbook read(File file)
   {
-    // TODO FIXIT
-    XlsReader.read(file)
+    switch (file.ext.lower)
+    {
+      case "csv": return CsvReader.read(file)
+      default:    return XlsReader.read(file)
+    }
   }
 }

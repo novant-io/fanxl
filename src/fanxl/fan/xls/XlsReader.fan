@@ -10,7 +10,7 @@ using util
 using xml
 
 **
-** Fanxl reads and parses XLSX files.
+** XlsReader reads and parses XLSX files.
 **
 internal class XlsReader
 {

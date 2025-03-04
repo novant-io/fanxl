@@ -19,7 +19,7 @@ class Build : build::BuildPod
     depends = ["sys 1.0", "util 1.0", "xml 1.0"]
     srcDirs = [
       `fan/`,
-      // `fan/csv/`,
+      `fan/csv/`,
       // `fan/num/`,
       `fan/xls/`,
       `test/`
