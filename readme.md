@@ -1,4 +1,4 @@
-# Fantom API for parsing Excel XLSX files
+# Universal Fantom API for parsing Spreadsheet files (CSV, MS Excel, Apple Numbers)
 
 Example:
 

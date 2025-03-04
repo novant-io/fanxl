@@ -17,7 +17,13 @@ class Build : build::BuildPod
       "vcs.uri":      "https://github.com/novant-io/fanxl"
     ]
     depends = ["sys 1.0", "util 1.0", "xml 1.0"]
-    srcDirs = [`fan/`, `test/`]
+    srcDirs = [
+      `fan/`,
+      // `fan/csv/`,
+      // `fan/num/`,
+      `fan/xls/`,
+      `test/`
+    ]
     docApi  = true
     docSrc  = true
   }
