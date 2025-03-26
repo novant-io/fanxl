@@ -50,18 +50,25 @@ internal class XlsWriter
     {
       sout := zip.writeNext(`/xl/worksheets/sheet1.xml`)
       sout.printLine(
-       Str<|<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-            <worksheet xmlns="${xmlns}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-            <dimension ref="A1:E10"/>
-            <sheetViews>
-              <sheetView tabSelected="1" workbookViewId="0"/>
-            </sheetViews>
-            <sheetFormatPr defaultRowHeight="15"/>
-            <sheetData>|>)
+       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+        <worksheet xmlns=\"${xmlns}\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">
+          <dimension ref=\"A1:C1\"/>
+          <sheetViews>
+            <sheetView tabSelected=\"1\" workbookViewId=\"0\"/>
+          </sheetViews>
+          <sheetFormatPr defaultRowHeight=\"15\"/>
+          <sheetData>")
 
       sheet.rows.each |row|
       {
-        sout.printLine("<row r=\"${row.index}\">")
+        sout.printLine("<row r=\"${row.index}\" spans=\"1:3\">")
+        3.times |i|
+        {
+          col  := ('A' + i).toChar
+          ssix := ssix("foo")
+          sout.printLine("<c r=\"${col}${row.index}\" t=\"s\"><v>${ssix}</v></c>")
+        }
+
         sout.printLine("</row>")
       }
 
@@ -81,7 +88,7 @@ internal class XlsWriter
   {
     out := zip.writeNext(`/xl/sharedStrings.xml`)
     out.printLine("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
-    out.print("<sst xmlns=\"${xmlns}\" count=\"${sst.size}\" uniqueCount=\"${sst.size}\">")
+    out.printLine("<sst xmlns=\"${xmlns}\" count=\"${sst.size}\" uniqueCount=\"${sst.size}\">")
     sst.each |ix,val|
     {
       out.printLine("<si><t>${val.toXml}</t></si>")
@@ -104,7 +111,7 @@ internal class XlsWriter
   }
 
   ** Get sst index for given string value.
-  private Int ssindex(Str val)
+  private Int ssix(Str val)
   {
     ix := sst[val]
     if (ix == null)

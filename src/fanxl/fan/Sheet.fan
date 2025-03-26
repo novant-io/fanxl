@@ -50,10 +50,12 @@ class Sheet
   ** Add a new row to this sheet.
   SheetRow addRow()
   {
-    SheetRow {
+    row := SheetRow {
       it.sheet = this
       it.index = rows.size + 1
     }
+    rows.add(row)
+    return row
   }
 
   override Str toStr() { "${sheetId}:${name}" }
