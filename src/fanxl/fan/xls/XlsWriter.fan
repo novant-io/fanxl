@@ -65,8 +65,9 @@ internal class XlsWriter
         3.times |i|
         {
           col  := ('A' + i).toChar
-          ssix := ssix("foo")
-          sout.printLine("<c r=\"${col}${row.index}\" t=\"s\"><v>${ssix}</v></c>")
+          sout.printLine("<c r=\"${col}${row.index}\" t=\"inlineStr\">")
+          sout.printLine("<is><t>foo-${col}</t></is>")
+          sout.printLine("</c>")
         }
 
         sout.printLine("</row>")
@@ -79,21 +80,7 @@ internal class XlsWriter
       sout.close
     }
 
-    // write sst and close out zip
-    writeSharedStrings(zip)
     zip.close
-  }
-
-  private Void writeSharedStrings(Zip zip)
-  {
-    out := zip.writeNext(`/xl/sharedStrings.xml`)
-    out.printLine("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
-    out.printLine("<sst xmlns=\"${xmlns}\" count=\"${sst.size}\" uniqueCount=\"${sst.size}\">")
-    sst.each |ix,val|
-    {
-      out.printLine("<si><t>${val.toXml}</t></si>")
-    }
-    out.printLine("</sst>")
   }
 
 //////////////////////////////////////////////////////////////////////////
@@ -110,18 +97,6 @@ internal class XlsWriter
     in.close
   }
 
-  ** Get sst index for given string value.
-  private Int ssix(Str val)
-  {
-    ix := sst[val]
-    if (ix == null)
-    {
-      ix = sst.size
-      sst[val] = ix
-    }
-    return ix
-  }
-
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////
@@ -129,5 +104,4 @@ internal class XlsWriter
   private static const Str xmlns := "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
 
   private Workbook wb
-  private Str:Int sst := [:] { it.ordered=true }
 }
