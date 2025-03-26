@@ -23,4 +23,10 @@ const class Fanxl
       default:    return XlsReader.read(file)
     }
   }
+
+  ** Write the given workbook in XLS format to output stream.
+  static Void writeXls(Workbook wb, OutStream out)
+  {
+    XlsWriter(wb).write(out)
+  }
 }

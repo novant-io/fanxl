@@ -24,6 +24,15 @@ class Build : build::BuildPod
       `fan/xls/`,
       `test/`
     ]
+    resDirs = [
+      `res/template-xls/`,
+      `res/template-xls/_rels/`,
+      `res/template-xls/docProps/`,
+      `res/template-xls/xl/`,
+      `res/template-xls/xl/_rels/`,
+      `res/template-xls/xl/theme/`,
+      `res/template-xls/xl/worksheets/`,
+    ]
     docApi  = true
     docSrc  = true
   }
