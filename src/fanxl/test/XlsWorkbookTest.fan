@@ -32,6 +32,10 @@ class WorkbookTest : Test
         verifyEq(cell.val, "${ci},${ri}")
       }
     }
+
+    verifyEq(sh.get("A1"),  "0,0")
+    verifyEq(sh.get("D5"),  "3,4")
+    verifyEq(sh.get("D20"), null)
   }
 
 //////////////////////////////////////////////////////////////////////////

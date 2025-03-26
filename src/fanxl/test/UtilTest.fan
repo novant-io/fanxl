@@ -28,4 +28,12 @@ class UtilTest : Test
     verifyEq(Util.cellRefToColIndex("RW35"),  490)
     verifyEq(Util.cellRefToColIndex("ZZ92"),  701)
   }
+
+  Void testRowIndex()
+  {
+    verifyEq(Util.cellRefToRowIndex("A1"),     0)
+    verifyEq(Util.cellRefToRowIndex("B2"),     1)
+    verifyEq(Util.cellRefToRowIndex("C35"),   34)
+    verifyEq(Util.cellRefToRowIndex("Z200"), 199)
+  }
 }

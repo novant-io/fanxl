@@ -23,4 +23,12 @@ internal const class Util
     // convert back to 0-based
     return cix-1
   }
+
+  ** Parse a Str reference such as 'C12' to the zero-based row index '11'.
+  static Int cellRefToRowIndex(Str ref)
+  {
+    pos := 0
+    while (ref[pos].isAlpha) pos++
+    return ref[pos..-1].toInt - 1
+  }
 }

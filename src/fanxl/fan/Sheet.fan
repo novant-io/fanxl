@@ -29,6 +29,16 @@ class Sheet
   ** State of this sheet.
   Str state := "visible"
 
+  ** Get the given cell value (ex: "A5") or 'null' if not found.
+  Str? get(Str ref)
+  {
+    cix := Util.cellRefToColIndex(ref)
+    rix := Util.cellRefToRowIndex(ref)
+    row := rows.getSafe(rix)
+    if (row == null) return null
+    return row.cells.getSafe(cix)?.val
+  }
+
   ** Rows for this sheet.
   SheetRow[] rows := SheetRow[,]
 
