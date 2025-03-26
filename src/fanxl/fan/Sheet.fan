@@ -47,5 +47,14 @@ class Sheet
     return acc
   }
 
+  ** Add a new row to this sheet.
+  SheetRow addRow()
+  {
+    SheetRow {
+      it.sheet = this
+      it.index = rows.size + 1
+    }
+  }
+
   override Str toStr() { "${sheetId}:${name}" }
 }

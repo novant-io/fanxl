@@ -25,6 +25,10 @@ internal class XlsWriter
     this.wb = wb
   }
 
+//////////////////////////////////////////////////////////////////////////
+// Write
+//////////////////////////////////////////////////////////////////////////
+
   ** Write workbook to given output stream.
   Void write(OutStream out)
   {
@@ -47,8 +51,7 @@ internal class XlsWriter
       sout := zip.writeNext(`/xl/worksheets/sheet1.xml`)
       sout.printLine(
        Str<|<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-            <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
-                       xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+            <worksheet xmlns="${xmlns}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
             <dimension ref="A1:E10"/>
             <sheetViews>
               <sheetView tabSelected="1" workbookViewId="0"/>
@@ -56,7 +59,11 @@ internal class XlsWriter
             <sheetFormatPr defaultRowHeight="15"/>
             <sheetData>|>)
 
-      // TODO: rows + shared_strings
+      sheet.rows.each |row|
+      {
+        sout.printLine("<row r=\"${row.index}\">")
+        sout.printLine("</row>")
+      }
 
       sout.printLine(
        Str<|</sheetData>
@@ -65,8 +72,26 @@ internal class XlsWriter
       sout.close
     }
 
+    // write sst and close out zip
+    writeSharedStrings(zip)
     zip.close
   }
+
+  private Void writeSharedStrings(Zip zip)
+  {
+    out := zip.writeNext(`/xl/sharedStrings.xml`)
+    out.printLine("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>")
+    out.print("<sst xmlns=\"${xmlns}\" count=\"${sst.size}\" uniqueCount=\"${sst.size}\">")
+    sst.each |ix,val|
+    {
+      out.printLine("<si><t>${val.toXml}</t></si>")
+    }
+    out.printLine("</sst>")
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Support
+//////////////////////////////////////////////////////////////////////////
 
   ** Pipe a pod file to given zip file into zip.
   private Void writePodFile(Zip zip, Uri uri)
@@ -78,9 +103,24 @@ internal class XlsWriter
     in.close
   }
 
+  ** Get sst index for given string value.
+  private Int ssindex(Str val)
+  {
+    ix := sst[val]
+    if (ix == null)
+    {
+      ix = sst.size
+      sst[val] = ix
+    }
+    return ix
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
+  private static const Str xmlns := "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+
   private Workbook wb
+  private Str:Int sst := [:] { it.ordered=true }
 }
