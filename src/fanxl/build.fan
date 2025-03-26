@@ -31,7 +31,6 @@ class Build : build::BuildPod
       `res/template-xls/xl/`,
       `res/template-xls/xl/_rels/`,
       `res/template-xls/xl/theme/`,
-      `res/template-xls/xl/worksheets/`,
     ]
     docApi  = true
     docSrc  = true

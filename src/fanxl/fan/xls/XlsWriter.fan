@@ -28,16 +28,43 @@ internal class XlsWriter
   ** Write workbook to given output stream.
   Void write(OutStream out)
   {
-    zip  := Zip.write(out)
+    // init zip
+    zip := Zip.write(out)
+
+    // doc metadata
     writePodFile(zip, `/_rels/.rels`)
     writePodFile(zip, `/docProps/app.xml`)
     writePodFile(zip, `/docProps/core.xml`)
     writePodFile(zip, `/xl/_rels/workbook.xml.rels`)
     writePodFile(zip, `/xl/theme/theme1.xml`)
-    writePodFile(zip, `/xl/worksheets/sheet1.xml`)
     writePodFile(zip, `/xl/styles.xml`)
     writePodFile(zip, `/xl/workbook.xml`)
     writePodFile(zip, `/[Content_Types].xml`)
+
+    // sheets
+    wb.sheets.each |sheet|
+    {
+      sout := zip.writeNext(`/xl/worksheets/sheet1.xml`)
+      sout.printLine(
+       Str<|<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+            <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+                       xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+            <dimension ref="A1:E10"/>
+            <sheetViews>
+              <sheetView tabSelected="1" workbookViewId="0"/>
+            </sheetViews>
+            <sheetFormatPr defaultRowHeight="15"/>
+            <sheetData>|>)
+
+      // TODO: rows + shared_strings
+
+      sout.printLine(
+       Str<|</sheetData>
+            <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>
+            </worksheet>|>)
+      sout.close
+    }
+
     zip.close
   }
 
@@ -51,18 +78,9 @@ internal class XlsWriter
     in.close
   }
 
-  ** Write given file into zip.
-  private Void writeNext(Zip zip, Uri uri, Str content)
-  {
-    out := zip.writeNext(uri)
-    out.printLine(content)
-    out.close
-  }
-
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////
-
 
   private Workbook wb
 }
