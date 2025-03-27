@@ -26,6 +26,20 @@ class SheetRow
   ** Cells for this rows.
   SheetCell[] cells := [,]
 
+  ** Update the cell reference.
+  Void update(Int col, Str val)
+  {
+    // backfill missing cells
+    while (col >= cells.size)
+    {
+      ix := cells.size
+      cells.add(SheetCell {})
+    }
+
+    // update
+    cells[col].val = val
+  }
+
   ** A row is empty if `cells` is empty for every value
   ** for `cells` is empty.
   Bool isEmpty()

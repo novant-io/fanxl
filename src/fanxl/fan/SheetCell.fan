@@ -18,7 +18,7 @@ class SheetCell
   new make(|This| f) { f(this) }
 
   ** Cell value
-  Str val
+  Str val := ""
 
   ** Get cell value as 'Float' or return 'null' if cell was empty.
   Float? float()

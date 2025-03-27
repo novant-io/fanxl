@@ -10,10 +10,15 @@ using util
 using xml
 
 **
-** Sheet models a single spreadsheet in a 'Workbook'.
+** Sheet models a single worksheet in a 'Workbook'.
 **
 class Sheet
 {
+
+//////////////////////////////////////////////////////////////////////////
+// Construction
+//////////////////////////////////////////////////////////////////////////
+
   ** It-block ctor.
   new make(|This| f) { f(this) }
 
@@ -29,8 +34,14 @@ class Sheet
   ** State of this sheet.
   Str state := "visible"
 
+  override Str toStr() { "${sheetId}:${name}" }
+
+//////////////////////////////////////////////////////////////////////////
+// Cells
+//////////////////////////////////////////////////////////////////////////
+
   ** Get the given cell value (ex: "A5") or 'null' if not found.
-  Str? get(Str ref)
+  Str? cell(Str ref)
   {
     cix := Util.cellRefToColIndex(ref)
     rix := Util.cellRefToRowIndex(ref)
@@ -39,8 +50,37 @@ class Sheet
     return row.cells.getSafe(cix)?.val
   }
 
+  ** Update the cell reference.
+  Void updateCell(Str ref, Str val)
+  {
+    cix := Util.cellRefToColIndex(ref)
+    rix := Util.cellRefToRowIndex(ref)
+
+    // backfill missing rows
+    while (rix >= rows.size) this.addRow
+
+    // update
+    row := rows[rix]
+    row.update(cix, val)
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Rows
+//////////////////////////////////////////////////////////////////////////
+
   ** Rows for this sheet.
   SheetRow[] rows := SheetRow[,]
+
+  ** Add a new row to this sheet.
+  SheetRow addRow()
+  {
+    row := SheetRow {
+      it.sheet = this
+      it.index = rows.size + 1
+    }
+    rows.add(row)
+    return row
+  }
 
   ** Create a new list which is the result of calling 'f' for
   ** every row (excluding header) in this sheet.
@@ -56,17 +96,4 @@ class Sheet
     }
     return acc
   }
-
-  ** Add a new row to this sheet.
-  SheetRow addRow()
-  {
-    row := SheetRow {
-      it.sheet = this
-      it.index = rows.size + 1
-    }
-    rows.add(row)
-    return row
-  }
-
-  override Str toStr() { "${sheetId}:${name}" }
 }

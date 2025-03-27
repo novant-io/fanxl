@@ -80,6 +80,7 @@ if (s == null) return
     {
       if (file.name.startsWith("sheet") && file.ext == "xml")
       {
+// TODO FIXIT -> this will not work!  We need to load _rels/.rels to find rId:sheet<x>.xml
         sheetId := file.name[5..-5]
         sheet   := book.sheets.find |s| { s.sheetId == sheetId }
         //if (sheet == null) throw ArgErr("Sheet not found '${sheetId}'")
