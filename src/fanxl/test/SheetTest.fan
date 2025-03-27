@@ -41,6 +41,30 @@ class SheetTest : AbstractWorkbookTest
 
   Void testUpdateCell()
   {
+    wb := Fanxl.read(getTestFile("test_1.xlsx"))
+    sh := wb.sheets.first
+
+    // sheet.update
+    sh.updateCell("A1", "foo")
+    verifyCell(sh.cell("A1"), "foo")
+    verifyCell(sh.row(0).cell(0), "foo")
+
+    // sheet.update
+    sh.row(0).updateCell(0, "bar")
+    verifyCell(sh.cell("A1"), "bar")
+    verifyCell(sh.row(0).cell(0), "bar")
+  }
+
+  Void testUpdateCelsl()
+  {
+    wb := Fanxl.read(getTestFile("test_1.xlsx"))
+    sh := wb.sheets.first
+
+    // sheet.update
+    sh.updateCells(0, ["foo","bar","zar"])
+    verifyCell(sh.cell("A1"), "foo")
+    verifyCell(sh.cell("B1"), "bar")
+    verifyCell(sh.cell("C1"), "zar")
   }
 }
 

@@ -57,11 +57,20 @@ class Sheet
     rix := Util.cellRefToRowIndex(ref)
 
     // backfill missing rows
-    while (rix >= rows.size) this.addRow
+    expandRows(rix)
 
     // update
     row := rows[rix]
     row.updateCell(cix, val)
+    return this
+  }
+
+  ** Update all the cells in the given row.
+  This updateCells(Int index, Str[] cells, Int col := 0)
+  {
+    // backfill missing rows
+    expandRows(index)
+    rows[index].updateCells(cells, col)
     return this
   }
 
@@ -75,9 +84,11 @@ class Sheet
     rows.getSafe(index)
   }
 
-// TODO: goes away
-  ** Rows for this sheet.
-  SheetRow[] rows := SheetRow[,]
+  ** Iterate the rows in this sheet.
+  Void eachRow(|SheetRow| f)
+  {
+    rows.each(f)
+  }
 
   ** Add a new row to this sheet.
   SheetRow addRow()
@@ -88,17 +99,6 @@ class Sheet
     }
     rows.add(row)
     return row
-  }
-
-  ** Update all the cells in the given row.
-  This updateRow(Int index, Str[] cells)
-  {
-    // backfill missing rows
-    while (index >= rows.size) this.addRow
-
-    // row
-    // TODO
-    return this
   }
 
   ** Create a new list which is the result of calling 'f' for
@@ -114,5 +114,15 @@ class Sheet
       }
     }
     return acc
+  }
+
+// TODO: goes away
+  ** Rows for this sheet.
+  @NoDoc SheetRow[] rows := SheetRow[,]
+
+  ** Expand the sheet to the given row index
+  private Void expandRows(Int index)
+  {
+    while (index >= rows.size) this.addRow
   }
 }
