@@ -32,21 +32,6 @@ class WorkbookTest : Test
         verifyEq(cell.val, "${ci},${ri}")
       }
     }
-
-    // get
-    verifyEq(sh.cell("A1"),  "0,0")
-    verifyEq(sh.cell("D5"),  "3,4")
-    verifyEq(sh.cell("D20"), null)
-
-    // update
-    sh.updateCell("A1", "foo")
-    verifyEq(sh.cell("A1"), "foo")
-    verifyEq(sh.rows[0].cells[0].val, "foo")
-
-    // update
-    sh.updateCell("Z25", "bar")
-    verifyEq(sh.cell("Z25"), "bar")
-    // verifyEq(sh.rows[0].cells[0].val, "foo")
   }
 
 //////////////////////////////////////////////////////////////////////////

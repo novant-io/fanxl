@@ -23,11 +23,19 @@ class SheetRow
   ** Index of this row in parent sheet.
   Int index
 
+// TODO GOES AWAY
+
   ** Cells for this rows.
   SheetCell[] cells := [,]
 
+  ** Get the given cell value or 'null' if not found.
+  SheetCell? cell(Int col)
+  {
+    cells.getSafe(col)
+  }
+
   ** Update the cell reference.
-  Void update(Int col, Str val)
+  Void updateCell(Int col, Str val)
   {
     // backfill missing cells
     while (col >= cells.size)
@@ -38,6 +46,20 @@ class SheetRow
 
     // update
     cells[col].val = val
+  }
+
+  ** Update a range of cells starting at given column.
+  Void updateCells(Str[] vals, Int col := 0)
+  {
+    // expand row if needed
+    maxc := col + vals.size
+    while (maxc >= cells.size) cells.add(SheetCell {})
+
+    // update
+    vals.each |v,i|
+    {
+      cells[col+i].val = v
+    }
   }
 
   ** A row is empty if `cells` is empty for every value

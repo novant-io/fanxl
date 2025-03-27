@@ -41,17 +41,17 @@ class Sheet
 //////////////////////////////////////////////////////////////////////////
 
   ** Get the given cell value (ex: "A5") or 'null' if not found.
-  Str? cell(Str ref)
+  SheetCell? cell(Str ref)
   {
     cix := Util.cellRefToColIndex(ref)
     rix := Util.cellRefToRowIndex(ref)
     row := rows.getSafe(rix)
     if (row == null) return null
-    return row.cells.getSafe(cix)?.val
+    return row.cells.getSafe(cix)
   }
 
   ** Update the cell reference.
-  Void updateCell(Str ref, Str val)
+  This updateCell(Str ref, Str val)
   {
     cix := Util.cellRefToColIndex(ref)
     rix := Util.cellRefToRowIndex(ref)
@@ -61,13 +61,21 @@ class Sheet
 
     // update
     row := rows[rix]
-    row.update(cix, val)
+    row.updateCell(cix, val)
+    return this
   }
 
 //////////////////////////////////////////////////////////////////////////
 // Rows
 //////////////////////////////////////////////////////////////////////////
 
+  ** Get the row at the given index or 'null' if not found.
+  SheetRow? row(Int index)
+  {
+    rows.getSafe(index)
+  }
+
+// TODO: goes away
   ** Rows for this sheet.
   SheetRow[] rows := SheetRow[,]
 
@@ -80,6 +88,17 @@ class Sheet
     }
     rows.add(row)
     return row
+  }
+
+  ** Update all the cells in the given row.
+  This updateRow(Int index, Str[] cells)
+  {
+    // backfill missing rows
+    while (index >= rows.size) this.addRow
+
+    // row
+    // TODO
+    return this
   }
 
   ** Create a new list which is the result of calling 'f' for
