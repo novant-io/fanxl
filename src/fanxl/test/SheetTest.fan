@@ -60,11 +60,21 @@ class SheetTest : AbstractWorkbookTest
     wb := Fanxl.read(getTestFile("test_1.xlsx"))
     sh := wb.sheets.first
 
-    // sheet.update
+    // sheet.updateCells
     sh.updateCells(0, ["foo","bar","zar"])
     verifyCell(sh.cell("A1"), "foo")
     verifyCell(sh.cell("B1"), "bar")
     verifyCell(sh.cell("C1"), "zar")
+    verifyCell(sh.cell("D1"), "3,0")
+    verifyCell(sh.cell("E1"), "4,0")
+
+    // // with offset
+    sh.updateCells(0, ["xxx","yyy","zzz"], 2)
+    verifyCell(sh.cell("A1"), "foo")
+    verifyCell(sh.cell("B1"), "bar")
+    verifyCell(sh.cell("C1"), "xxx")
+    verifyCell(sh.cell("D1"), "yyy")
+    verifyCell(sh.cell("E1"), "zzz")
   }
 }
 
