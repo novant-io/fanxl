@@ -17,12 +17,26 @@ class Workbook
   ** It-block ctor.
   new make(|This| f) { f(this) }
 
-  ** The sheets for this workbook.
-  Sheet[] sheets := [,]
-
   ** Get sheet with given 'name' or 'null' if none found.
   Sheet? sheet(Str name)
   {
     sheets.find |s| { s.name == name }
   }
+
+  ** Add a new sheet to this workbook.
+  Sheet addSheet(Str name)
+  {
+    // TODO FIXIT relId/sheetId
+    s := Sheet {
+      it.name = "Sheet1"
+      it.relId = "rId1"
+      it.sheetId = "1"
+    }
+    sheets.add(s)
+    return s
+  }
+
+// TODO GOES AWAY
+  ** The sheets for this workbook.
+  @NoDoc Sheet[] sheets := [,]
 }
