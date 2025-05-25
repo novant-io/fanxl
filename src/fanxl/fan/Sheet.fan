@@ -125,4 +125,27 @@ class Sheet
   {
     while (index >= rows.size) this.addRow
   }
+
+//////////////////////////////////////////////////////////////////////////
+// Export
+//////////////////////////////////////////////////////////////////////////
+
+  ** Export this sheet content to a CSV string.
+  Str toCsvStr()
+  {
+    buf := StrBuf()
+    toCsv(buf.out)
+    return buf.toStr
+  }
+
+  ** Export this sheet content to CSV on the given output stream.
+  Void toCsv(OutStream out)
+  {
+    csv := CsvOutStream(out)
+    this.rows.each |r|
+    {
+      row := r.cells.map |c| { c.val }
+      csv.writeRow(row)
+    }
+  }
 }
