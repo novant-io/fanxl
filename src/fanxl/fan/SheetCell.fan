@@ -12,7 +12,7 @@ using xml
 **
 ** SheetCell models a single cell in a 'SheetRow'.
 **
-class SheetCell
+@Js class SheetCell
 {
   ** It-block ctor.
   new make(|This| f) { f(this) }

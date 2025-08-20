@@ -12,7 +12,7 @@ using xml
 **
 ** SheetRow models a single row in a 'Sheet'.
 **
-class SheetRow
+@Js class SheetRow
 {
   ** It-block ctor.
   new make(|This| f) { f(this) }

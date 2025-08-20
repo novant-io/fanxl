@@ -12,7 +12,7 @@ using xml
 **
 ** Sheet models a single worksheet in a 'Workbook'.
 **
-class Sheet
+@Js class Sheet
 {
 
 //////////////////////////////////////////////////////////////////////////

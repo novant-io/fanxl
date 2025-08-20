@@ -12,7 +12,7 @@ using xml
 **
 ** Workbook is a document that models a list of spreadsheet 'Sheets'.
 **
-class Workbook
+@Js class Workbook
 {
   ** It-block ctor.
   new make(|This| f) { f(this) }

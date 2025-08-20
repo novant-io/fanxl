@@ -6,7 +6,7 @@
 //   6 Dec 2024  Andy Frank  Creation
 //
 
-internal const class Util
+@Js internal const class Util
 {
   ** Parse a Str reference such as 'C12' to the zero-based column index '2'.
   static Int cellRefToColIndex(Str ref)
