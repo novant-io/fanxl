@@ -66,9 +66,10 @@ if (s == null) return
     sheets.elems.each |x|
     {
       book.sheets.add(Sheet {
-        it.relId   = x.attr("id").val
-        it.sheetId = x.attr("sheetId").val
+        // it.relId   = x.attr("id").val
+        // it.sheetId = x.attr("sheetId").val
         it.name    = x.attr("name").val
+        it.id      = x.attr("sheetId").val.toInt
         it.state   = x.attr("state", false)?.val ?: "visible"
       })
     }
@@ -81,7 +82,8 @@ if (s == null) return
     {
       if (file.name.startsWith("sheet") && file.ext == "xml")
       {
-// TODO FIXIT -> this will not work!  We need to load _rels/.rels to find rId:sheet<x>.xml
+// TODO FIXIT -> this will not work!  We need to load workbook.xml.refs to find rId:sheet<x>.xml
+// <Relationship Id="rId3" Target="worksheets/sheet3.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>
         sheetId := file.name[5..-5]
         sheet   := book.sheets.find |s| { s.sheetId == sheetId }
         //if (sheet == null) throw ArgErr("Sheet not found '${sheetId}'")

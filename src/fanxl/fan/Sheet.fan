@@ -22,11 +22,17 @@ class Sheet
   ** It-block ctor.
   new make(|This| f) { f(this) }
 
-  ** Relationship id of this sheet.
-  Str relId
+  ** Sheet id.
+  const Int id
+
+  ** Get the relationship ID (computed)
+  Str relId() { "rId${id}" }
+
+  // ** Relationship id of this sheet.
+  // Str relId
 
   ** Internal id of this sheet.
-  Str sheetId
+  Str sheetId() { id.toStr }
 
   ** Name of this sheet.
   Str name

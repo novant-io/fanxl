@@ -29,8 +29,9 @@ class Workbook
     id := nextSheetId++
     s := Sheet {
       it.name = name
-      it.relId = "rId${id}"
-      it.sheetId = "${id}"
+      it.id = id
+      // it.relId = "rId${id}"
+      // it.sheetId = "${id}"
     }
     // TODO: must have one row/cell
     s.updateCell("A1", "")
@@ -38,8 +39,9 @@ class Workbook
     return s
   }
 
-  ** The sheets for this workbook.
-  @NoDoc Sheet[] sheets := [,]
+  ** Iterate sheets in this workbook.
+  Void eachSheet(|Sheet| f) { sheets.each(f) }
 
-  private Int nextSheetId := 1    // next sheet_id to assign in addSheet
+  internal Sheet[] sheets  := [,]   // sheets for this book
+  private Int nextSheetId := 1     // next sheet_id to assign
 }

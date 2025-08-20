@@ -48,7 +48,7 @@ internal class XlsWriter
     writeContentTypes(zip)
 
     // sheets
-    wb.sheets.each |s| { writeSheet(zip, s) }
+    wb.eachSheet |s| { writeSheet(zip, s) }
 
     zip.close
   }
@@ -70,7 +70,7 @@ internal class XlsWriter
           <workbookView xWindow=\"240\" yWindow=\"15\" windowWidth=\"16095\" windowHeight=\"9660\"/>
         </bookViews>
         <sheets>")
-    wb.sheets.each |s|
+    wb.eachSheet |s|
     {
       xout.printLine("    <sheet name=\"${s.name}\" sheetId=\"${s.sheetId}\" r:id=\"${s.relId}\"/>")
     }
@@ -89,7 +89,7 @@ internal class XlsWriter
      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
       <Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">")
 
-    wb.sheets.each |s|
+    wb.eachSheet |s|
     {
       // assume format: rId1
       maxRelId = maxRelId.max(s.relId[3..-1].toInt)
@@ -125,7 +125,7 @@ internal class XlsWriter
         </HeadingPairs>
         <TitlesOfParts>
           <vt:vector size=\"${wb.sheets.size}\" baseType=\"lpstr\">")
-    wb.sheets.each |s|
+    wb.eachSheet |s|
     {
       xout.printLine("      <vt:lpstr>${s.name}</vt:lpstr>")
     }
@@ -154,7 +154,7 @@ internal class XlsWriter
         <Override PartName=\"/xl/styles.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml\"/>
         <Override PartName=\"/xl/theme/theme1.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.theme+xml\"/>
         <Override PartName=\"/xl/workbook.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml\"/>")
-    wb.sheets.each |s|
+    wb.eachSheet |s|
     {
       file := "sheet${s.sheetId}.xml"
       xout.printLine("<Override PartName=\"/xl/worksheets/${file}\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\"/>")

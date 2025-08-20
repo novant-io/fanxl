@@ -21,9 +21,10 @@ internal class CsvReader
     {
       // init default sheet
       sheet := Sheet {
-        it.relId   = "csv"
-        it.sheetId = "csv"
+        // it.relId   = "csv"
+        // it.sheetId = "csv"
         it.name    = "csv"
+        it.id      = 1
       }
 
       // open file and interate rows
