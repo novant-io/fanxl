@@ -26,8 +26,8 @@ class CsvWorkbookTest : Test
     verifyEq(sh.numRows, 10)
     sh.eachRow |row,ri|
     {
-      verifyEq(row.cells.size, 6)
-      row.cells.each |cell,ci|
+      verifyEq(row.size, 6)
+      row.eachCell |cell,ci|
       {
         verifyEq(cell.val, "${ci},${ri}")
       }

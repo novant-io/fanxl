@@ -23,13 +23,32 @@ class SheetRow
   ** Index of this row in parent sheet.
   Int index
 
-  ** Cells for this rows.
-  SheetCell[] cells := [,]
+// TODO: this is not right; this is a sheet thing
+  ** Get the number of columns in this row.
+  internal Int size() { cells.size }
 
   ** Get the given cell value or 'null' if not found.
   SheetCell? cell(Int col)
   {
     cells.getSafe(col)
+  }
+
+  ** Iterate each cell in this row.
+  Void eachCell(|SheetCell cell,Int index| f)
+  {
+    cells.each(f)
+  }
+
+  ** Map this row cells to another list.
+  Obj?[] mapCells(|SheetCell,Int->Obj?| f)
+  {
+    cells.map(f)
+  }
+
+  ** For unit testing
+  internal Str joinCells(Str sep := "", |SheetCell,Int->Str|? f := null)
+  {
+    cells.join(sep, f)
   }
 
   ** Update the cell reference.
@@ -86,5 +105,10 @@ class SheetRow
     return map
   }
 
+  // TODO: not sure how this works yet
+  internal Void _addCell(SheetCell c) { cells.add(c) }
+
   override Str toStr() { cells.join(", ") }
+
+  private SheetCell[] cells := [,]   // cells for this row
 }

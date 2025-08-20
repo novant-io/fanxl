@@ -38,7 +38,7 @@ internal class CsvReader
         }
 
         // add values
-        vals.each |val| { row.cells.add(SheetCell { it.val=val }) }
+        vals.each |val| { row._addCell(SheetCell { it.val=val }) }
 
         // add row
         sheet._addRow(row)

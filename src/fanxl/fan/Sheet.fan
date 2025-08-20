@@ -51,7 +51,7 @@ class Sheet
     rix := Util.cellRefToRowIndex(ref)
     row := rows.getSafe(rix)
     if (row == null) return null
-    return row.cells.getSafe(cix)
+    return row.cell(cix)
   }
 
   ** Update the cell reference.
@@ -86,7 +86,7 @@ class Sheet
     cols := 1
     rows.each |r|
     {
-      cols = cols.max(r.cells.size)
+      cols = cols.max(r.size)
     }
     return ('A'+cols-1).toChar + "${row}"
   }
@@ -169,7 +169,7 @@ class Sheet
     csv := CsvOutStream(out)
     this.rows.each |r|
     {
-      row := r.cells.map |c| { c.val }
+      row := r.mapCells |c| { c.val }
       csv.writeRow(row)
     }
   }

@@ -170,8 +170,9 @@ internal class XlsWriter
   private Void writeSheet(Zip zip, Sheet sheet)
   {
     file := "sheet${sheet.id}.xml"
-    sout := zip.writeNext(`/xl/worksheets/${file}`)
-    sout.printLine(
+    eout := zip.writeNext(`/xl/worksheets/${file}`)
+
+    eout.printLine(
      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
       <worksheet xmlns=\"${xmlns}\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">
         <dimension ref=\"A1:${sheet.lastRef}\"/>
@@ -183,23 +184,23 @@ internal class XlsWriter
 
     sheet.eachRow |row|
     {
-      sout.printLine("<row r=\"${row.index}\" spans=\"1:3\">")
+      eout.printLine("<row r=\"${row.index}\" spans=\"1:3\">")
       3.times |i|
       {
         col  := ('A' + i).toChar
-        sout.printLine("<c r=\"${col}${row.index}\" t=\"inlineStr\">")
-        sout.printLine("<is><t>foo-${col}</t></is>")
-        sout.printLine("</c>")
+        eout.printLine("<c r=\"${col}${row.index}\" t=\"inlineStr\">")
+        eout.printLine("<is><t>foo-${col}</t></is>")
+        eout.printLine("</c>")
       }
 
-      sout.printLine("</row>")
+      eout.printLine("</row>")
     }
 
-    sout.printLine(
+    eout.printLine(
      Str<|</sheetData>
           <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>
           </worksheet>|>)
-    sout.close
+    eout.close
   }
 
 //////////////////////////////////////////////////////////////////////////

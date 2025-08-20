@@ -117,7 +117,7 @@ if (sheet == null) return
         // backfill empty/sparse columns if needed
         cix  := Util.cellRefToColIndex(ref)
         miss := cix - lastcix
-        while (miss-- > 1) row.cells.add(SheetCell { it.val="" })
+        while (miss-- > 1) row._addCell(SheetCell { it.val="" })
         lastcix = cix
 
         // read value based on type
@@ -128,12 +128,12 @@ if (sheet == null) return
             sid  := xc.elems.first.text.val.toInt
             val  := sst[sid] ?: "" // TODO
             cell := SheetCell { it.val=val }
-            row.cells.add(cell)
+            row._addCell(cell)
 
           default:
             val  := xc.elems.first?.text?.val ?: ""
             cell := SheetCell { it.val=val }
-            row.cells.add(cell)
+            row._addCell(cell)
         }
       }
 
