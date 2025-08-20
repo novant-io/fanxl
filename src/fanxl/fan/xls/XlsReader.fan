@@ -137,10 +137,10 @@ if (sheet == null) return
         }
       }
 
-      sheet.rows.add(row)
+      sheet._addRow(row)
     }
 
     // trim trailing empty rows
-    while (sheet.rows.last?.isEmpty == true) sheet.rows.pop
+    sheet.trim
   }
 }

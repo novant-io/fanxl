@@ -23,8 +23,8 @@ class CsvWorkbookTest : Test
     verifyEq(wb.numSheets, 1)
 
     sh := wb.sheet
-    verifyEq(sh.rows.size, 10)
-    sh.rows.each |row,ri|
+    verifyEq(sh.numRows, 10)
+    sh.eachRow |row,ri|
     {
       verifyEq(row.cells.size, 6)
       row.cells.each |cell,ci|

@@ -72,8 +72,8 @@ class SheetRow
   ** the column values for `rows[0]` from parent sheet.
   Str:Str? toMap()
   {
-    cols := sheet.rows[0].cells
-    vals := sheet.rows[index-1].cells
+    cols := sheet.row(0).cells
+    vals := sheet.row(index-1).cells
 
     map := Str:Str?[:] { it.ordered=true }
     cols.each |c,i|

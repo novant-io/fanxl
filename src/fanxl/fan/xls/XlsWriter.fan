@@ -181,7 +181,7 @@ internal class XlsWriter
         <sheetFormatPr defaultRowHeight=\"15\"/>
         <sheetData>")
 
-    sheet.rows.each |row|
+    sheet.eachRow |row|
     {
       sout.printLine("<row r=\"${row.index}\" spans=\"1:3\">")
       3.times |i|

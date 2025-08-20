@@ -41,7 +41,7 @@ internal class CsvReader
         vals.each |val| { row.cells.add(SheetCell { it.val=val }) }
 
         // add row
-        sheet.rows.add(row)
+        sheet._addRow(row)
       }
 
       // package in workbook and return

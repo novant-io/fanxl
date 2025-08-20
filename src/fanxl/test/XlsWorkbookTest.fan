@@ -23,8 +23,8 @@ class XlsWorkbookTest : Test
     verifyEq(wb.numSheets, 1)
 
     sh := wb.sheet
-    verifyEq(sh.rows.size, 10)
-    sh.rows.each |row,ri|
+    verifyEq(sh.numRows, 10)
+    sh.eachRow |row,ri|
     {
       verifyEq(row.cells.size, 6)
       row.cells.each |cell,ci|
@@ -57,21 +57,21 @@ class XlsWorkbookTest : Test
     verifyEq(wb.numSheets, 1)
 
     sh := wb.sheet
-    verifyEq(sh.rows.size, 10)
-    verifyEq(sh.rows[0].cells.join(";"), "0,0;1,0;2,0;3,0;4,0;5,0")
+    verifyEq(sh.numRows, 10)
+    verifyEq(sh.row(0).cells.join(";"), "0,0;1,0;2,0;3,0;4,0;5,0")
 // TODO: do not add trailing empty cells?
     // verifyEq(sh.rows[1].cells.join(";"), "0,1;1,1;2,1;3,1;4,1;")
-    verifyEq(sh.rows[1].cells.join(";"), "0,1;1,1;2,1;3,1;4,1")
-    verifyEq(sh.rows[2].cells.join(";"), ";1,2;2,2;3,2;4,2;5,2")
-    verifyEq(sh.rows[3].cells.join(";"), "0,3;;;3,3;4,3;5,3")
-    verifyEq(sh.rows[4].cells.join(";"), "0,4;1,4;2,4;3,4;4,4;5,4")
+    verifyEq(sh.row(1).cells.join(";"), "0,1;1,1;2,1;3,1;4,1")
+    verifyEq(sh.row(2).cells.join(";"), ";1,2;2,2;3,2;4,2;5,2")
+    verifyEq(sh.row(3).cells.join(";"), "0,3;;;3,3;4,3;5,3")
+    verifyEq(sh.row(4).cells.join(";"), "0,4;1,4;2,4;3,4;4,4;5,4")
 // TODO: do not add trailing empty cells?
     //verifyEq(sh.rows[4].cells.join(";"), "0,5;1,5;;;;")
-    verifyEq(sh.rows[5].cells.join(";"), "0,5;1,5")
-    verifyEq(sh.rows[6].cells.join(";"), "0,6;1,6;2,6;3,6;4,6;5,6")
-    verifyEq(sh.rows[7].cells.join(";"), "0,7;;2,7;;4,7;5,7")
-    verifyEq(sh.rows[8].cells.join(";"), "0,8;1,8;2,8;3,8;4,8;5,8")
-    verifyEq(sh.rows[9].cells.join(";"), ";1,9;;3,9;;5,9")
+    verifyEq(sh.row(5).cells.join(";"), "0,5;1,5")
+    verifyEq(sh.row(6).cells.join(";"), "0,6;1,6;2,6;3,6;4,6;5,6")
+    verifyEq(sh.row(7).cells.join(";"), "0,7;;2,7;;4,7;5,7")
+    verifyEq(sh.row(8).cells.join(";"), "0,8;1,8;2,8;3,8;4,8;5,8")
+    verifyEq(sh.row(9).cells.join(";"), ";1,9;;3,9;;5,9")
   }
 
 //////////////////////////////////////////////////////////////////////////

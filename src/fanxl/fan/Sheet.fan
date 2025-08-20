@@ -105,7 +105,7 @@ class Sheet
   }
 
   ** Iterate the rows in this sheet.
-  Void eachRow(|SheetRow| f)
+  Void eachRow(|SheetRow,Int| f)
   {
     rows.each(f)
   }
@@ -136,15 +136,14 @@ class Sheet
     return acc
   }
 
-// TODO: goes away
-  ** Rows for this sheet.
-  @NoDoc SheetRow[] rows := SheetRow[,]
-
   ** Expand the sheet to the given row index
   private Void expandRows(Int index)
   {
     while (index >= rows.size) this.addRow
   }
+
+  // TODO: not sure how this works yet
+  internal Void _addRow(SheetRow row) { this.rows.add(row) }
 
 //////////////////////////////////////////////////////////////////////////
 // Export
@@ -168,4 +167,16 @@ class Sheet
       csv.writeRow(row)
     }
   }
+
+  ** Trim trailing empty rows.
+  internal Void trim()
+  {
+    while (rows.size > 0 && rows.last.isEmpty == true) rows.pop
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Fields
+//////////////////////////////////////////////////////////////////////////
+
+  private SheetRow[] rows := SheetRow[,]   // rows for this sheet
 }
