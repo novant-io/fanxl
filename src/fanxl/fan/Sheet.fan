@@ -110,6 +110,12 @@ class Sheet
     rows.each(f)
   }
 
+  ** Iterate the rows in the given range for this sheet.
+  Void eachRowRange(Range r, |SheetRow,Int| f)
+  {
+    rows.eachRange(r, f)
+  }
+
   ** Add a new row to this sheet.
   SheetRow addRow()
   {
