@@ -40,12 +40,12 @@ internal class XlsWriter
     writePodFile(zip, `/docProps/core.xml`)
     writePodFile(zip, `/xl/theme/theme1.xml`)
     writePodFile(zip, `/xl/styles.xml`)
-    writePodFile(zip, `/[Content_Types].xml`)
 
     // indexes
     writeWbXml(zip)
     writeWbRels(zip)
     writeAppXml(zip)
+    writeContentTypes(zip)
 
     // sheets
     wb.sheets.each |s| { writeSheet(zip, s) }
@@ -138,6 +138,28 @@ internal class XlsWriter
         <HyperlinksChanged>false</HyperlinksChanged>
         <AppVersion>12.0000</AppVersion>
       </Properties>")
+  }
+
+  ** Write /[Content_Types].xml index.
+  private Void writeContentTypes(Zip zip)
+  {
+    xout := zip.writeNext(`/[Content_Types].xml`)
+    xout.printLine(
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">
+        <Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>
+        <Default Extension=\"xml\" ContentType=\"application/xml\"/>
+        <Override PartName=\"/docProps/app.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.extended-properties+xml\"/>
+        <Override PartName=\"/docProps/core.xml\" ContentType=\"application/vnd.openxmlformats-package.core-properties+xml\"/>
+        <Override PartName=\"/xl/styles.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml\"/>
+        <Override PartName=\"/xl/theme/theme1.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.theme+xml\"/>
+        <Override PartName=\"/xl/workbook.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml\"/>")
+    wb.sheets.each |s|
+    {
+      file := "sheet${s.sheetId}.xml"
+      xout.printLine("<Override PartName=\"/xl/worksheets/${file}\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\"/>")
+    }
+    xout.printLine("</Types>")
   }
 
 //////////////////////////////////////////////////////////////////////////
