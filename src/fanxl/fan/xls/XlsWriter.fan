@@ -36,6 +36,7 @@ internal class XlsWriter
     zip := Zip.write(out)
 
     // doc metadata
+    writePodFile(zip, `/_rels/.rels`)
     writePodFile(zip, `/docProps/app.xml`)
     writePodFile(zip, `/docProps/core.xml`)
     writePodFile(zip, `/xl/theme/theme1.xml`)
@@ -45,7 +46,6 @@ internal class XlsWriter
     // indexes
     writeWbXml(zip)
     writeWbRels(zip)
-    writeDotRels(zip)
 
     // sheets
     wb.sheets.each |s| { writeSheet(zip, s) }
@@ -93,35 +93,13 @@ internal class XlsWriter
     {
       // assume format: rId1
       maxRelId = maxRelId.max(s.relId[3..-1].toInt)
-      xout.printLine("<Relationship Id=\"${s.relId}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet1.xml\"/>")
+      xout.printLine("<Relationship Id=\"${s.relId}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet${s.sheetId}.xml\"/>")
     }
 
     xout.printLine(
      "  <Relationship Id=\"rId${maxRelId+1}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme\" Target=\"theme/theme1.xml\"/>
         <Relationship Id=\"rId${maxRelId+2}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/>
 
-      </Relationships>")
-  }
-
-  ** Write _rels/.rels index.
-  private Void writeDotRels(Zip zip)
-  {
-    maxRelId := 0
-    xout := zip.writeNext(`/_rels/.rels`)
-    xout.printLine(
-     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
-      <Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">")
-
-    wb.sheets.each |s|
-    {
-      // assume format: rId1
-      maxRelId = maxRelId.max(s.relId[3..-1].toInt)
-      xout.printLine("<Relationship Id=\"${s.relId}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"xl/workbook.xml\"/>")
-    }
-
-    xout.printLine(
-     "  <Relationship Id=\"rId${maxRelId+1}\" Type=\"http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties\" Target=\"docProps/core.xml\"/>
-        <Relationship Id=\"rId${maxRelId+2}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties\" Target=\"docProps/app.xml\"/>
       </Relationships>")
   }
 
