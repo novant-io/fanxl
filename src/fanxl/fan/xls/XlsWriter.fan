@@ -36,23 +36,29 @@ internal class XlsWriter
     zip := Zip.write(out)
 
     // doc metadata
-    writePodFile(zip, `/_rels/.rels`)
     writePodFile(zip, `/docProps/app.xml`)
     writePodFile(zip, `/docProps/core.xml`)
-    writePodFile(zip, `/xl/_rels/workbook.xml.rels`)
     writePodFile(zip, `/xl/theme/theme1.xml`)
     writePodFile(zip, `/xl/styles.xml`)
     writePodFile(zip, `/[Content_Types].xml`)
 
-    // content
-    writeIndex(zip)
+    // indexes
+    writeWbXml(zip)
+    writeWbRels(zip)
+    writeDotRels(zip)
+
+    // sheets
     wb.sheets.each |s| { writeSheet(zip, s) }
 
     zip.close
   }
 
+//////////////////////////////////////////////////////////////////////////
+// Indexes
+//////////////////////////////////////////////////////////////////////////
+
   ** Write workbook.xml index.
-  private Void writeIndex(Zip zip)
+  private Void writeWbXml(Zip zip)
   {
     xout := zip.writeNext(`/xl/workbook.xml`)
     xout.printLine(
@@ -73,6 +79,55 @@ internal class XlsWriter
         <calcPr calcId=\"124519\" />
       </workbook>")
   }
+
+  ** Write xl/_rels/workbook.xml.rels index.
+  private Void writeWbRels(Zip zip)
+  {
+    maxRelId := 0
+    xout := zip.writeNext(`/xl/_rels/workbook.xml.rels`)
+    xout.printLine(
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">")
+
+    wb.sheets.each |s|
+    {
+      // assume format: rId1
+      maxRelId = maxRelId.max(s.relId[3..-1].toInt)
+      xout.printLine("<Relationship Id=\"${s.relId}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet1.xml\"/>")
+    }
+
+    xout.printLine(
+     "  <Relationship Id=\"rId${maxRelId+1}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme\" Target=\"theme/theme1.xml\"/>
+        <Relationship Id=\"rId${maxRelId+2}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/>
+
+      </Relationships>")
+  }
+
+  ** Write _rels/.rels index.
+  private Void writeDotRels(Zip zip)
+  {
+    maxRelId := 0
+    xout := zip.writeNext(`/_rels/.rels`)
+    xout.printLine(
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">")
+
+    wb.sheets.each |s|
+    {
+      // assume format: rId1
+      maxRelId = maxRelId.max(s.relId[3..-1].toInt)
+      xout.printLine("<Relationship Id=\"${s.relId}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"xl/workbook.xml\"/>")
+    }
+
+    xout.printLine(
+     "  <Relationship Id=\"rId${maxRelId+1}\" Type=\"http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties\" Target=\"docProps/core.xml\"/>
+        <Relationship Id=\"rId${maxRelId+2}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties\" Target=\"docProps/app.xml\"/>
+      </Relationships>")
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Sheets
+//////////////////////////////////////////////////////////////////////////
 
   ** Write sheet to zip file.
   private Void writeSheet(Zip zip, Sheet sheet)
