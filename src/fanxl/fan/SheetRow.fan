@@ -23,8 +23,6 @@ class SheetRow
   ** Index of this row in parent sheet.
   Int index
 
-// TODO GOES AWAY
-
   ** Cells for this rows.
   SheetCell[] cells := [,]
 

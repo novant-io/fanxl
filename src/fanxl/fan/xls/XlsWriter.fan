@@ -37,7 +37,6 @@ internal class XlsWriter
 
     // doc metadata
     writePodFile(zip, `/_rels/.rels`)
-    writePodFile(zip, `/docProps/app.xml`)
     writePodFile(zip, `/docProps/core.xml`)
     writePodFile(zip, `/xl/theme/theme1.xml`)
     writePodFile(zip, `/xl/styles.xml`)
@@ -46,6 +45,7 @@ internal class XlsWriter
     // indexes
     writeWbXml(zip)
     writeWbRels(zip)
+    writeAppXml(zip)
 
     // sheets
     wb.sheets.each |s| { writeSheet(zip, s) }
@@ -101,6 +101,43 @@ internal class XlsWriter
         <Relationship Id=\"rId${maxRelId+2}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/>
 
       </Relationships>")
+  }
+
+  ** Write /docProps/app.xml index.
+  private Void writeAppXml(Zip zip)
+  {
+    xout := zip.writeNext(`/docProps/app.xml`)
+    xout.printLine(
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\" xmlns:vt=\"http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes\">
+        <Application>Microsoft Excel</Application>
+        <DocSecurity>0</DocSecurity>
+        <ScaleCrop>false</ScaleCrop>
+        <HeadingPairs>
+          <vt:vector size=\"2\" baseType=\"variant\">
+            <vt:variant>
+              <vt:lpstr>Worksheets</vt:lpstr>
+            </vt:variant>
+            <vt:variant>
+              <vt:i4>1</vt:i4>
+            </vt:variant>
+          </vt:vector>
+        </HeadingPairs>
+        <TitlesOfParts>
+          <vt:vector size=\"${wb.sheets.size}\" baseType=\"lpstr\">")
+    wb.sheets.each |s|
+    {
+      xout.printLine("      <vt:lpstr>${s.name}</vt:lpstr>")
+    }
+    xout.printLine(
+     "    </vt:vector>
+        </TitlesOfParts>
+        <Company/>
+        <LinksUpToDate>false</LinksUpToDate>
+        <SharedDoc>false</SharedDoc>
+        <HyperlinksChanged>false</HyperlinksChanged>
+        <AppVersion>12.0000</AppVersion>
+      </Properties>")
   }
 
 //////////////////////////////////////////////////////////////////////////
