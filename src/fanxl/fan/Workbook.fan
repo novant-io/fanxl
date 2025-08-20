@@ -17,6 +17,9 @@ class Workbook
   ** It-block ctor.
   new make(|This| f) { f(this) }
 
+  ** Get the number of sheets in this workbook.
+  Int numSheets() { sheets.size }
+
   ** Get sheet with given 'name' or 'null' if none found.
   Sheet? sheet(Str name)
   {

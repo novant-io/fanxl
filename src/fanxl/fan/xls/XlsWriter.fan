@@ -124,7 +124,7 @@ internal class XlsWriter
           </vt:vector>
         </HeadingPairs>
         <TitlesOfParts>
-          <vt:vector size=\"${wb.sheets.size}\" baseType=\"lpstr\">")
+          <vt:vector size=\"${wb.numSheets}\" baseType=\"lpstr\">")
     wb.eachSheet |s|
     {
       xout.printLine("      <vt:lpstr>${s.name}</vt:lpstr>")

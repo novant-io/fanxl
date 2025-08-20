@@ -20,7 +20,7 @@ class XlsWorkbookTest : Test
   Void test1()
   {
     wb := Fanxl.read(getTestFile("test_1.xlsx"))
-    verifyEq(wb.sheets.size, 1)
+    verifyEq(wb.numSheets, 1)
 
     sh := wb.sheets.first
     verifyEq(sh.rows.size, 10)
@@ -54,7 +54,7 @@ class XlsWorkbookTest : Test
   Void test2()
   {
     wb := Fanxl.read(getTestFile("test_2.xlsx"))
-    verifyEq(wb.sheets.size, 1)
+    verifyEq(wb.numSheets, 1)
 
     sh := wb.sheets.first
     verifyEq(sh.rows.size, 10)
