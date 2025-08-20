@@ -29,6 +29,12 @@ class Workbook
       : sheets.find |s| { s.name == name }
   }
 
+  // TODO: not sure how this works yet...
+  @NoDoc Sheet? sheetAt(Int index)
+  {
+    sheets.getSafe(index)
+  }
+
   ** Add a new sheet to this workbook.
   Sheet addSheet(Str name)
   {
