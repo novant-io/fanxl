@@ -46,7 +46,7 @@ internal class CsvReader
 
       // package in workbook and return
       book := Workbook {}
-      book.sheets.add(sheet)
+      book._addSheet(sheet)
       return book
     }
     catch (Err err)

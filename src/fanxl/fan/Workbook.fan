@@ -48,6 +48,10 @@ class Workbook
   ** Iterate sheets in this workbook.
   Void eachSheet(|Sheet| f) { sheets.each(f) }
 
-  internal Sheet[] sheets  := [,]   // sheets for this book
+  // TODO: not sure how this works yet
+  internal Void _addSheet(Sheet s) { sheets.add(s) }
+  internal Sheet? _sheetById(Int id) { sheets.find |s| { s.id == id }}
+
+  private Sheet[] sheets  := [,]   // sheets for this book
   private Int nextSheetId := 1     // next sheet_id to assign
 }
