@@ -7,10 +7,10 @@
 //
 
 *************************************************************************
-** WorkbookTest
+** XlsWorkbookTest
 *************************************************************************
 
-class WorkbookTest : Test
+class XlsWorkbookTest : Test
 {
 
 //////////////////////////////////////////////////////////////////////////
@@ -72,6 +72,24 @@ class WorkbookTest : Test
     verifyEq(sh.rows[7].cells.join(";"), "0,7;;2,7;;4,7;5,7")
     verifyEq(sh.rows[8].cells.join(";"), "0,8;1,8;2,8;3,8;4,8;5,8")
     verifyEq(sh.rows[9].cells.join(";"), ";1,9;;3,9;;5,9")
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// test3
+//////////////////////////////////////////////////////////////////////////
+
+  Void test3()
+  {
+    // x := File.os("/Users/andy/Desktop/test_x.xlsx")
+    // XlsReader.read(x)
+
+    f := tempDir + `write_test_1.xlsx`
+
+    wb := Workbook {}
+    wb.addSheet("Foo")
+    wb.addSheet("Bar")
+    wb.addSheet("Car")
+    XlsWriter(wb).write(f.out)
   }
 
 //////////////////////////////////////////////////////////////////////////

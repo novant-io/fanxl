@@ -41,6 +41,7 @@ internal class XlsReader
   private static Void readSharedStrings(Zip zip, Int:Str sst)
   {
     file := zip.contents[`/xl/sharedStrings.xml`]
+    if (file == null) return
     doc  := XParser(file.in).parseDoc
     root := doc.root
     root.elems.each |k,i|
@@ -138,6 +139,6 @@ if (sheet == null) return
     }
 
     // trim trailing empty rows
-    while (sheet.rows.last.isEmpty) sheet.rows.pop
+    while (sheet.rows.last?.isEmpty == true) sheet.rows.pop
   }
 }

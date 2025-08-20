@@ -42,45 +42,72 @@ internal class XlsWriter
     writePodFile(zip, `/xl/_rels/workbook.xml.rels`)
     writePodFile(zip, `/xl/theme/theme1.xml`)
     writePodFile(zip, `/xl/styles.xml`)
-    writePodFile(zip, `/xl/workbook.xml`)
     writePodFile(zip, `/[Content_Types].xml`)
 
-    // sheets
-    wb.sheets.each |sheet|
-    {
-      sout := zip.writeNext(`/xl/worksheets/sheet1.xml`)
-      sout.printLine(
-       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
-        <worksheet xmlns=\"${xmlns}\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">
-          <dimension ref=\"A1:C1\"/>
-          <sheetViews>
-            <sheetView tabSelected=\"1\" workbookViewId=\"0\"/>
-          </sheetViews>
-          <sheetFormatPr defaultRowHeight=\"15\"/>
-          <sheetData>")
-
-      sheet.rows.each |row|
-      {
-        sout.printLine("<row r=\"${row.index}\" spans=\"1:3\">")
-        3.times |i|
-        {
-          col  := ('A' + i).toChar
-          sout.printLine("<c r=\"${col}${row.index}\" t=\"inlineStr\">")
-          sout.printLine("<is><t>foo-${col}</t></is>")
-          sout.printLine("</c>")
-        }
-
-        sout.printLine("</row>")
-      }
-
-      sout.printLine(
-       Str<|</sheetData>
-            <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>
-            </worksheet>|>)
-      sout.close
-    }
+    // content
+    writeIndex(zip)
+    wb.sheets.each |s| { writeSheet(zip, s) }
 
     zip.close
+  }
+
+  ** Write workbook.xml index.
+  private Void writeIndex(Zip zip)
+  {
+    xout := zip.writeNext(`/xl/workbook.xml`)
+    xout.printLine(
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">
+        <fileVersion appName=\"xl\" lastEdited=\"4\" lowestEdited=\"4\" rupBuild=\"4505\"/>
+        <workbookPr defaultThemeVersion=\"124226\"/>
+        <bookViews>
+          <workbookView xWindow=\"240\" yWindow=\"15\" windowWidth=\"16095\" windowHeight=\"9660\"/>
+        </bookViews>
+        <sheets>")
+    wb.sheets.each |s|
+    {
+      xout.printLine("    <sheet name=\"${s.name}\" sheetId=\"${s.sheetId}\" r:id=\"${s.relId}\"/>")
+    }
+    xout.printLine(
+     "  </sheets>
+        <calcPr calcId=\"124519\" />
+      </workbook>")
+  }
+
+  ** Write sheet to zip file.
+  private Void writeSheet(Zip zip, Sheet sheet)
+  {
+    file := "sheet${sheet.sheetId}.xml"
+    sout := zip.writeNext(`/xl/worksheets/${file}`)
+    sout.printLine(
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <worksheet xmlns=\"${xmlns}\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">
+        <dimension ref=\"A1:C1\"/>
+        <sheetViews>
+          <sheetView tabSelected=\"1\" workbookViewId=\"0\"/>
+        </sheetViews>
+        <sheetFormatPr defaultRowHeight=\"15\"/>
+        <sheetData>")
+
+    sheet.rows.each |row|
+    {
+      sout.printLine("<row r=\"${row.index}\" spans=\"1:3\">")
+      3.times |i|
+      {
+        col  := ('A' + i).toChar
+        sout.printLine("<c r=\"${col}${row.index}\" t=\"inlineStr\">")
+        sout.printLine("<is><t>foo-${col}</t></is>")
+        sout.printLine("</c>")
+      }
+
+      sout.printLine("</row>")
+    }
+
+    sout.printLine(
+     Str<|</sheetData>
+          <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/>
+          </worksheet>|>)
+    sout.close
   }
 
 //////////////////////////////////////////////////////////////////////////

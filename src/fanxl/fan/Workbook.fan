@@ -26,17 +26,18 @@ class Workbook
   ** Add a new sheet to this workbook.
   Sheet addSheet(Str name)
   {
-    // TODO FIXIT relId/sheetId
+    id := nextSheetId++
     s := Sheet {
-      it.name = "Sheet1"
-      it.relId = "rId1"
-      it.sheetId = "1"
+      it.name = name
+      it.relId = "rId${id}"
+      it.sheetId = "${id}"
     }
     sheets.add(s)
     return s
   }
 
-// TODO GOES AWAY
   ** The sheets for this workbook.
   @NoDoc Sheet[] sheets := [,]
+
+  private Int nextSheetId := 1    // next sheet_id to assign in addSheet
 }
