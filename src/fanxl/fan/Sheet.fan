@@ -20,27 +20,25 @@ class Sheet
 //////////////////////////////////////////////////////////////////////////
 
   ** It-block ctor.
-  new make(|This| f) { f(this) }
+  new make(|This| f)
+  {
+    f(this)
+    this.relId = "rId${id}"
+  }
 
   ** Sheet id.
   const Int id
 
-  ** Get the relationship ID (computed)
-  Str relId() { "rId${id}" }
-
-  // ** Relationship id of this sheet.
-  // Str relId
-
-  ** Internal id of this sheet.
-  Str sheetId() { id.toStr }
+  ** Relationship id of this sheet.
+  const Str relId
 
   ** Name of this sheet.
   Str name
 
   ** State of this sheet.
-  Str state := "visible"
+  internal Str state := "visible"
 
-  override Str toStr() { "${sheetId}:${name}" }
+  override Str toStr() { "${id}:${name}" }
 
 //////////////////////////////////////////////////////////////////////////
 // Cells

@@ -72,7 +72,7 @@ internal class XlsWriter
         <sheets>")
     wb.eachSheet |s|
     {
-      xout.printLine("    <sheet name=\"${s.name}\" sheetId=\"${s.sheetId}\" r:id=\"${s.relId}\"/>")
+      xout.printLine("    <sheet name=\"${s.name}\" sheetId=\"${s.id}\" r:id=\"${s.relId}\"/>")
     }
     xout.printLine(
      "  </sheets>
@@ -93,7 +93,7 @@ internal class XlsWriter
     {
       // assume format: rId1
       maxRelId = maxRelId.max(s.relId[3..-1].toInt)
-      xout.printLine("<Relationship Id=\"${s.relId}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet${s.sheetId}.xml\"/>")
+      xout.printLine("<Relationship Id=\"${s.relId}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet${s.id}.xml\"/>")
     }
 
     xout.printLine(
@@ -156,7 +156,7 @@ internal class XlsWriter
         <Override PartName=\"/xl/workbook.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml\"/>")
     wb.eachSheet |s|
     {
-      file := "sheet${s.sheetId}.xml"
+      file := "sheet${s.id}.xml"
       xout.printLine("<Override PartName=\"/xl/worksheets/${file}\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\"/>")
     }
     xout.printLine("</Types>")
@@ -169,7 +169,7 @@ internal class XlsWriter
   ** Write sheet to zip file.
   private Void writeSheet(Zip zip, Sheet sheet)
   {
-    file := "sheet${sheet.sheetId}.xml"
+    file := "sheet${sheet.id}.xml"
     sout := zip.writeNext(`/xl/worksheets/${file}`)
     sout.printLine(
      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>

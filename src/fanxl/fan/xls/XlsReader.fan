@@ -84,8 +84,8 @@ if (s == null) return
       {
 // TODO FIXIT -> this will not work!  We need to load workbook.xml.refs to find rId:sheet<x>.xml
 // <Relationship Id="rId3" Target="worksheets/sheet3.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>
-        sheetId := file.name[5..-5]
-        sheet   := book.sheets.find |s| { s.sheetId == sheetId }
+        sheetId := file.name[5..-5].toInt
+        sheet   := book.sheets.find |s| { s.id == sheetId }
         //if (sheet == null) throw ArgErr("Sheet not found '${sheetId}'")
 // TODO
 if (sheet == null) return
