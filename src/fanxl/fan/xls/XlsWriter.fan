@@ -174,7 +174,7 @@ internal class XlsWriter
     sout.printLine(
      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
       <worksheet xmlns=\"${xmlns}\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">
-        <dimension ref=\"A1:C1\"/>
+        <dimension ref=\"A1:${sheet.lastRef}\"/>
         <sheetViews>
           <sheetView tabSelected=\"1\" workbookViewId=\"0\"/>
         </sheetViews>

@@ -32,10 +32,8 @@ class Workbook
       it.relId = "rId${id}"
       it.sheetId = "${id}"
     }
-    s.addRow
+    // TODO: must have one row/cell
     s.updateCell("A1", "")
-    s.updateCell("B1", "")
-    s.updateCell("C1", "")
     sheets.add(s)
     return s
   }

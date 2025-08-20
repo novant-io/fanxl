@@ -74,9 +74,25 @@ class Sheet
     return this
   }
 
+  ** Get the last cell reference (last row and column).
+  internal Str lastRef()
+  {
+    // TODO FIXIT
+    row  := this.numRows
+    cols := 1
+    rows.each |r|
+    {
+      cols = cols.max(r.cells.size)
+    }
+    return ('A'+cols-1).toChar + "${row}"
+  }
+
 //////////////////////////////////////////////////////////////////////////
 // Rows
 //////////////////////////////////////////////////////////////////////////
+
+  ** Get the number of rows in this sheet.
+  Int numRows() { rows.size }
 
   ** Get the row at the given index or 'null' if not found.
   SheetRow? row(Int index)
