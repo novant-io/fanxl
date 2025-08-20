@@ -20,7 +20,7 @@ class Sheet
 //////////////////////////////////////////////////////////////////////////
 
   ** It-block ctor.
-  new make(|This| f)
+  internal new make(|This| f)
   {
     f(this)
     this.relId = "rId${id}"
