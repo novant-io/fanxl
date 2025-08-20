@@ -184,15 +184,17 @@ internal class XlsWriter
 
     sheet.eachRow |row|
     {
-      eout.printLine("<row r=\"${row.index}\" spans=\"1:3\">")
-      3.times |i|
+      eout.printLine("<row r=\"${row.index}\" spans=\"1:${sheet.numCols}\">")
+      sheet.numCols.times |i|
       {
+        cell := row.cell(i)
+        val  := cell?.val ?: ""
+        // TODO: cell.ref
         col  := ('A' + i).toChar
         eout.printLine("<c r=\"${col}${row.index}\" t=\"inlineStr\">")
-        eout.printLine("<is><t>foo-${col}</t></is>")
+        eout.writeChars("<is><t>").writeXml(val).writeChars("</t></is>")
         eout.printLine("</c>")
       }
-
       eout.printLine("</row>")
     }
 

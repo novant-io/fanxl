@@ -80,16 +80,27 @@ class XlsWorkbookTest : Test
 
   Void test3()
   {
-    // x := File.os("/Users/andy/Desktop/test_x.xlsx")
-    // XlsReader.read(x)
-
+    // temp file
     f := tempDir + `write_test_1.xlsx`
 
-    wb := Workbook {}
-    wb.addSheet("Foo")
-    wb.addSheet("Bar")
-    wb.addSheet("Car")
-    XlsWriter(wb).write(f.out)
+    // write file
+    w := Workbook {}
+    // foo
+    s := w.addSheet("Foo")
+    s.updateCell("A1", "Alpha")
+    s.updateCell("B1", "Beta")
+    s.updateCell("C1", "Gamma")
+    // bar
+    w.addSheet("Bar")
+    // zar
+    w.addSheet("Zar")
+    XlsWriter(w).write(f.out)
+
+    // read back file
+    r := XlsReader.read(f)
+    verifyEq(r.numSheets, 3)
+    s1 := r.sheet("Foo")
+    verifyEq(s.row(0).joinCells(";"), "Alpha;Beta;Gamma")
   }
 
 //////////////////////////////////////////////////////////////////////////
