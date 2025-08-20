@@ -11,7 +11,7 @@ using util
 **
 ** CsvReader reads and parses CSV files.
 **
-internal class CsvReader
+@Js internal class CsvReader
 {
   ** Read the given file and return a `Workbook` instance.
   static Workbook read(File file)

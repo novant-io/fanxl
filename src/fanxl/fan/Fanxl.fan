@@ -12,7 +12,7 @@ using xml
 **
 ** Fanxl reads and parses XLSX files.
 **
-const class Fanxl
+@Js const class Fanxl
 {
   ** Read the given file and return a `Workbook` instance.
   static Workbook read(File file)
