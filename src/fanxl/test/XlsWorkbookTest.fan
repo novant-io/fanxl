@@ -22,7 +22,7 @@ class XlsWorkbookTest : Test
     wb := Fanxl.read(getTestFile("test_1.xlsx"))
     verifyEq(wb.numSheets, 1)
 
-    sh := wb.sheets.first
+    sh := wb.sheet
     verifyEq(sh.rows.size, 10)
     sh.rows.each |row,ri|
     {
@@ -56,7 +56,7 @@ class XlsWorkbookTest : Test
     wb := Fanxl.read(getTestFile("test_2.xlsx"))
     verifyEq(wb.numSheets, 1)
 
-    sh := wb.sheets.first
+    sh := wb.sheet
     verifyEq(sh.rows.size, 10)
     verifyEq(sh.rows[0].cells.join(";"), "0,0;1,0;2,0;3,0;4,0;5,0")
 // TODO: do not add trailing empty cells?

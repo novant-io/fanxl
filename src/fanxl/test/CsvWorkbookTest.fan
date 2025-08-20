@@ -22,7 +22,7 @@ class CsvWorkbookTest : Test
     wb := Fanxl.read(getTestFile("test_1.csv"))
     verifyEq(wb.numSheets, 1)
 
-    sh := wb.sheets.first
+    sh := wb.sheet
     verifyEq(sh.rows.size, 10)
     sh.rows.each |row,ri|
     {

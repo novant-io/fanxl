@@ -20,10 +20,13 @@ class Workbook
   ** Get the number of sheets in this workbook.
   Int numSheets() { sheets.size }
 
-  ** Get sheet with given 'name' or 'null' if none found.
-  Sheet? sheet(Str name)
+  ** Get sheet with given 'name' or 'null' if none found, or if
+  ** no name is provied, return the first sheet in thsi workbook.
+  Sheet? sheet(Str? name := null)
   {
-    sheets.find |s| { s.name == name }
+    name == null
+      ? sheets.first
+      : sheets.find |s| { s.name == name }
   }
 
   ** Add a new sheet to this workbook.
