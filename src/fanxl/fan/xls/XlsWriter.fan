@@ -180,9 +180,20 @@ internal class XlsWriter
         <sheetViews>
           <sheetView tabSelected=\"${sel}\" workbookViewId=\"0\"/>
         </sheetViews>
-        <sheetFormatPr defaultRowHeight=\"15\"/>
-        <sheetData>")
+        <sheetFormatPr defaultRowHeight=\"15\"/>")
 
+    // column widths
+    eout.printLine("  <cols>")
+    sheet.numCols.times |cix|
+    {
+      ix := cix + 1
+      cw := sheet.colWidth(cix)
+      eout.printLine("    <col min=\"$ix\" max=\"$ix\" width=\"${cw}\" customWidth=\"1\" />")
+    }
+    eout.printLine("  </cols>")
+
+    // row data
+    eout.printLine("  <sheetData>")
     sheet.eachRow |row|
     {
       eout.printLine("<row r=\"${row.index}\" spans=\"1:${sheet.numCols}\">")

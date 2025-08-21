@@ -44,6 +44,19 @@ using xml
 // Cells
 //////////////////////////////////////////////////////////////////////////
 
+  // TODO: do we standardize on ref/alpha of index? or both with Obj?
+
+  @NoDoc Int colWidth(Int col)
+  {
+    cwidths[col] ?: 10
+  }
+
+  ** Set the given column width by reference (ex: "A")
+  @NoDoc Void setColWidth(Int col, Int width)
+  {
+    cwidths[col] = width
+  }
+
   ** Get the given cell value (ex: "A5") or 'null' if not found.
   SheetCell? cell(Str ref)
   {
@@ -191,5 +204,6 @@ using xml
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
+  private Int:Int cwidths := Int:Int[:]    // column widths (or null for n/a)
   private SheetRow[] rows := SheetRow[,]   // rows for this sheet
 }
