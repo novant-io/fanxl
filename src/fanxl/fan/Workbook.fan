@@ -15,7 +15,13 @@ using xml
 @Js class Workbook
 {
   ** It-block ctor.
-  new make(|This| f) { f(this) }
+  new make(|This| f)
+  {
+    // TODO: this is not right - just fudged for now
+    this.setPos(100, 100)
+    this.setSize(900, 600)
+    f(this)
+  }
 
   ** Get the number of sheets in this workbook.
   Int numSheets() { sheets.size }
@@ -54,10 +60,29 @@ using xml
   ** Iterate sheets in this workbook.
   Void eachSheet(|Sheet| f) { sheets.each(f) }
 
+  // TODO
+  @NoDoc Void setPos(Int x, Int y)
+  {
+    this.x = x * 15  // convert px -> "twips"
+    this.y = y * 15
+  }
+
+  // TODO - this is all wrong
+  @NoDoc Void setSize(Int w, Int h)
+  {
+    this.w = (w * 15 * 1.5f).toInt  // convert px -> "twips"
+    this.h = (h * 15 * 1.5f).toInt
+  }
+
   // TODO: not sure how this works yet
   internal Void _addSheet(Sheet s) { sheets.add(s) }
   internal Sheet? _sheetById(Int id) { sheets.find |s| { s.id == id }}
 
   private Sheet[] sheets  := [,]   // sheets for this book
   private Int nextSheetId := 1     // next sheet_id to assign
+
+  internal Int x                   // x-pos of window on screen
+  internal Int y                   // y-pos of window on screen
+  internal Int w                   // width of window on screen
+  internal Int h                   // height of window on screen
 }

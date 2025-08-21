@@ -67,7 +67,7 @@ internal class XlsWriter
         <fileVersion appName=\"xl\" lastEdited=\"4\" lowestEdited=\"4\" rupBuild=\"4505\"/>
         <workbookPr defaultThemeVersion=\"124226\"/>
         <bookViews>
-          <workbookView xWindow=\"240\" yWindow=\"15\" windowWidth=\"16095\" windowHeight=\"9660\"/>
+          <workbookView xWindow=\"${wb.x}\" yWindow=\"${wb.y}\" windowWidth=\"${wb.w}\" windowHeight=\"${wb.h}\"/>
         </bookViews>
         <sheets>")
     wb.eachSheet |s|
