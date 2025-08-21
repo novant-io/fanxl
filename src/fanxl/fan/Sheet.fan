@@ -81,9 +81,9 @@ using xml
   ** Get the last cell reference (last row and column).
   internal Str lastRef()
   {
-    cols := this.numRows
-    row  := this.numRows
-    return ('A'+cols-1).toChar + "${row}"
+    col := Util.colIndexToRef(numCols-1)
+    row := this.numRows
+    return "${col}${row}"
   }
 
 //////////////////////////////////////////////////////////////////////////

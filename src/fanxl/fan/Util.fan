@@ -31,4 +31,20 @@
     while (ref[pos].isAlpha) pos++
     return ref[pos..-1].toInt - 1
   }
+
+  ** Convert a column index to an alphabetic column reference.
+  static Str colIndexToRef(Int col)
+  {
+    if (col < 0) throw ArgErr("Invalid column: $col")
+
+    buf := StrBuf()
+    x := col
+    while (x >= 0)
+    {
+      c := (x % 26) + 'A'
+      buf.insert(0, c.toChar)
+      x = (x / 26) - 1   // subtract 1 after division to handle carry properly
+    }
+    return buf.toStr
+  }
 }

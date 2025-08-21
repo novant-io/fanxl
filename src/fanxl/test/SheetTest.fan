@@ -22,6 +22,8 @@ class SheetTest : AbstractWorkbookTest
     wb := Fanxl.read(getTestFile("test_1.xlsx"))
     sh := wb.sheet
 
+    verifyEq(sh.lastRef, "F10")
+
     // sheet.cell
     verifyCell(sh.cell("A1"),  "0,0")
     verifyCell(sh.cell("D5"),  "3,4")

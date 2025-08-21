@@ -36,4 +36,28 @@ class UtilTest : Test
     verifyEq(Util.cellRefToRowIndex("C35"),   34)
     verifyEq(Util.cellRefToRowIndex("Z200"), 199)
   }
+
+  Void testColRef()
+  {
+    // single
+    verifyEq(Util.colIndexToRef(0),  "A")
+    verifyEq(Util.colIndexToRef(1),  "B")
+    verifyEq(Util.colIndexToRef(2),  "C")
+    verifyEq(Util.colIndexToRef(23), "X")
+    verifyEq(Util.colIndexToRef(24), "Y")
+    verifyEq(Util.colIndexToRef(25), "Z")
+
+    // double
+    verifyEq(Util.colIndexToRef(26), "AA")
+    verifyEq(Util.colIndexToRef(27), "AB")
+    verifyEq(Util.colIndexToRef(28), "AC")
+    verifyEq(Util.colIndexToRef(49), "AX")
+    verifyEq(Util.colIndexToRef(50), "AY")
+    verifyEq(Util.colIndexToRef(51), "AZ")
+
+    // big
+    verifyEq(Util.colIndexToRef(135), "EF")
+    verifyEq(Util.colIndexToRef(490), "RW")
+    verifyEq(Util.colIndexToRef(701), "ZZ")
+  }
 }
