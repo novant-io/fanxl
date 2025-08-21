@@ -119,7 +119,7 @@ internal class XlsWriter
               <vt:lpstr>Worksheets</vt:lpstr>
             </vt:variant>
             <vt:variant>
-              <vt:i4>1</vt:i4>
+              <vt:i4>${wb.numSheets}</vt:i4>
             </vt:variant>
           </vt:vector>
         </HeadingPairs>
@@ -170,6 +170,7 @@ internal class XlsWriter
   private Void writeSheet(Zip zip, Sheet sheet)
   {
     file := "sheet${sheet.id}.xml"
+    sel  := wb.sheet.name == sheet.name ? 1 : 0
     eout := zip.writeNext(`/xl/worksheets/${file}`)
 
     eout.printLine(
@@ -177,7 +178,7 @@ internal class XlsWriter
       <worksheet xmlns=\"${xmlns}\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">
         <dimension ref=\"A1:${sheet.lastRef}\"/>
         <sheetViews>
-          <sheetView tabSelected=\"1\" workbookViewId=\"0\"/>
+          <sheetView tabSelected=\"${sel}\" workbookViewId=\"0\"/>
         </sheetViews>
         <sheetFormatPr defaultRowHeight=\"15\"/>
         <sheetData>")
