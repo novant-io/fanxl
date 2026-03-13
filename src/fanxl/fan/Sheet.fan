@@ -79,6 +79,7 @@ using xml
     // update
     row := rows[rix]
     row.updateCell(cix, val)
+    _numCols = null
     return this
   }
 
@@ -88,6 +89,7 @@ using xml
     // backfill missing rows
     expandRows(index)
     rows[index].updateCells(cells, col)
+    _numCols = null
     return this
   }
 
@@ -106,13 +108,13 @@ using xml
   ** Get the number of columns in this sheet.
   Int numCols()
   {
-    // TODO FIXT
-    ncols := 1
-    rows.each |r|
+    if (_numCols == null)
     {
-      ncols = ncols.max(r.size)
+      n := 1
+      rows.each |r| { n = n.max(r.size) }
+      _numCols = n
     }
-    return ncols
+    return _numCols
   }
 
   ** Get the number of rows in this sheet.
@@ -169,7 +171,7 @@ using xml
   }
 
   // TODO: not sure how this works yet
-  internal Void _addRow(SheetRow row) { this.rows.add(row) }
+  internal Void _addRow(SheetRow row) { this.rows.add(row); _numCols = null }
 
 //////////////////////////////////////////////////////////////////////////
 // Export
@@ -198,12 +200,14 @@ using xml
   internal Void trim()
   {
     while (rows.size > 0 && rows.last.isEmpty == true) rows.pop
+    _numCols = null
   }
 
 //////////////////////////////////////////////////////////////////////////
 // Fields
 //////////////////////////////////////////////////////////////////////////
 
+  private Int? _numCols                    // cached col count (null to recompute)
   private Int:Int cwidths := Int:Int[:]    // column widths (or null for n/a)
   private SheetRow[] rows := SheetRow[,]   // rows for this sheet
 }
