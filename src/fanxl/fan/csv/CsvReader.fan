@@ -28,13 +28,14 @@ using util
       }
 
       // open file and interate rows
+      rnum := 1
       in = CsvInStream(file.in)
       in.eachRow |vals|
       {
         // init row
         row := SheetRow {
           it.sheet = sheet
-          it.index = 0
+          it.index = rnum++
         }
 
         // add values

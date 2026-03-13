@@ -57,7 +57,7 @@ class SheetTest : AbstractWorkbookTest
     verifyCell(sh.row(0).cell(0), "bar")
   }
 
-  Void testUpdateCelsl()
+  Void testUpdateCells()
   {
     wb := Fanxl.read(getTestFile("test_1.xlsx"))
     sh := wb.sheet
