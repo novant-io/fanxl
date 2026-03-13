@@ -46,11 +46,25 @@ internal class XlsReader
     root := doc.root
     root.elems.each |k,i|
     {
-      t := k.elems.first
-      s := t.children.first as XText
-// TODO <si><r>...
-if (s == null) return
-      sst.add(i, s.val)
+      first := k.elems.first
+      if (first.name == "t")
+      {
+        // simple string: <si><t>text</t></si>
+        s := first.children.first as XText
+        sst.add(i, s?.val ?: "")
+      }
+      else
+      {
+        // rich text: <si><r><rPr>...</rPr><t>text</t></r>...</si>
+        buf := StrBuf()
+        k.elems.each |r|
+        {
+          t := r.elems.find |e| { e.name == "t" }
+          s := t?.children?.first as XText
+          if (s != null) buf.add(s.val)
+        }
+        sst.add(i, buf.toStr)
+      }
     }
   }
 
