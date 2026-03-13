@@ -201,8 +201,7 @@ internal class XlsWriter
       {
         cell := row.cell(i)
         val  := cell?.val ?: ""
-        // TODO: cell.ref
-        col  := ('A' + i).toChar
+        col  := Util.colIndexToRef(i)
         eout.printLine("<c r=\"${col}${row.index}\" t=\"inlineStr\">")
         eout.writeChars("<is><t>").writeXml(val).writeChars("</t></is>")
         eout.printLine("</c>")
