@@ -100,7 +100,7 @@ class XlsWorkbookTest : Test
     r := XlsReader.read(f)
     verifyEq(r.numSheets, 3)
     s1 := r.sheet("Foo")
-    verifyEq(s.row(0).joinCells(";"), "Alpha;Beta;Gamma")
+    verifyEq(s1.row(0).joinCells(";"), "Alpha;Beta;Gamma")
   }
 
 //////////////////////////////////////////////////////////////////////////

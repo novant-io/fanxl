@@ -130,6 +130,12 @@ if (sheet == null) return
             cell := SheetCell { it.val=val }
             row._addCell(cell)
 
+          case "inlineStr":
+            // inline string: <is><t>value</t></is>
+            val  := xc.elems.first?.elems?.first?.text?.val ?: ""
+            cell := SheetCell { it.val=val }
+            row._addCell(cell)
+
           default:
             val  := xc.elems.first?.text?.val ?: ""
             cell := SheetCell { it.val=val }
