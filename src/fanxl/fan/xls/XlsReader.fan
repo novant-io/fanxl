@@ -14,6 +14,10 @@ using xml
 **
 internal class XlsReader
 {
+  // Excel maximum limits for bounds checking
+  private static const Int maxRows := 1_048_576
+  private static const Int maxCols := 16_384
+
   ** Read the given file and return a `Workbook` instance.
   static Workbook read(File file)
   {
@@ -141,6 +145,7 @@ internal class XlsReader
     data.elems.each |xr,i|
     {
       rowNum := xr.attr("r", false)?.val?.toInt ?: (lastRowNum + 1)
+      if (rowNum > maxRows) throw ParseErr("Row $rowNum exceeds max ($maxRows)")
 
       // backfill sparse/missing rows
       while (rowNum > lastRowNum + 1)
@@ -166,6 +171,7 @@ internal class XlsReader
 
         // backfill empty/sparse columns if needed
         cix  := ref != null ? Util.cellRefToColIndex(ref) : lastcix + 1
+        if (cix >= maxCols) throw ParseErr("Column $cix exceeds max ($maxCols)")
         miss := cix - lastcix
         while (miss-- > 1) row._addCell(SheetCell { it.val="" })
         lastcix = cix
