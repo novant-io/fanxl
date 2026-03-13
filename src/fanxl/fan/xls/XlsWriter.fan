@@ -72,7 +72,7 @@ internal class XlsWriter
         <sheets>")
     wb.eachSheet |s|
     {
-      xout.printLine("    <sheet name=\"${s.name}\" sheetId=\"${s.id}\" r:id=\"${s.relId}\"/>")
+      xout.printLine("    <sheet name=\"${s.name.toXml}\" sheetId=\"${s.id}\" r:id=\"${s.relId}\"/>")
     }
     xout.printLine(
      "  </sheets>
@@ -127,7 +127,7 @@ internal class XlsWriter
           <vt:vector size=\"${wb.numSheets}\" baseType=\"lpstr\">")
     wb.eachSheet |s|
     {
-      xout.printLine("      <vt:lpstr>${s.name}</vt:lpstr>")
+      xout.printLine("      <vt:lpstr>${s.name.toXml}</vt:lpstr>")
     }
     xout.printLine(
      "    </vt:vector>
