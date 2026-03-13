@@ -60,4 +60,13 @@ class UtilTest : Test
     verifyEq(Util.colIndexToRef(490), "RW")
     verifyEq(Util.colIndexToRef(701), "ZZ")
   }
+
+  Void testInvalidRefs()
+  {
+    verifyErr(ArgErr#) { Util.cellRefToColIndex("") }
+    verifyErr(ArgErr#) { Util.cellRefToColIndex("123") }
+    verifyErr(ArgErr#) { Util.cellRefToRowIndex("") }
+    verifyErr(ArgErr#) { Util.cellRefToRowIndex("123") }
+    verifyErr(ArgErr#) { Util.colIndexToRef(-1) }
+  }
 }

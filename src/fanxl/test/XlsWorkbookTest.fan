@@ -104,6 +104,145 @@ class XlsWorkbookTest : Test
   }
 
 //////////////////////////////////////////////////////////////////////////
+// test4
+//////////////////////////////////////////////////////////////////////////
+
+  // -- Multi-sheet round-trip with data on each sheet
+  Void test4()
+  {
+    f := tempDir + `write_test_4.xlsx`
+
+    // write
+    w := Workbook {}
+    s1 := w.addSheet("Sheet1")
+    s1.updateCell("A1", "Name")
+    s1.updateCell("B1", "Age")
+    s1.updateCell("A2", "Alice")
+    s1.updateCell("B2", "30")
+    s1.updateCell("A3", "Bob")
+    s1.updateCell("B3", "25")
+
+    s2 := w.addSheet("Sheet2")
+    s2.updateCell("A1", "X")
+    s2.updateCell("B1", "Y")
+    s2.updateCell("C1", "Z")
+
+    s3 := w.addSheet("Sheet3")
+    s3.updateCell("A1", "Solo")
+
+    XlsWriter(w).write(f.out)
+
+    // read back
+    r := XlsReader.read(f)
+    verifyEq(r.numSheets, 3)
+
+    // verify sheet1
+    rs1 := r.sheet("Sheet1")
+    verifyEq(rs1.numRows, 3)
+    verifyEq(rs1.row(0).joinCells(";"), "Name;Age")
+    verifyEq(rs1.row(1).joinCells(";"), "Alice;30")
+    verifyEq(rs1.row(2).joinCells(";"), "Bob;25")
+
+    // verify sheet2
+    rs2 := r.sheet("Sheet2")
+    verifyEq(rs2.numRows, 1)
+    verifyEq(rs2.row(0).joinCells(";"), "X;Y;Z")
+
+    // verify sheet3
+    rs3 := r.sheet("Sheet3")
+    verifyEq(rs3.numRows, 1)
+    verifyEq(rs3.row(0).joinCells(";"), "Solo")
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// test5
+//////////////////////////////////////////////////////////////////////////
+
+  // -- XML special characters in sheet names and cell values
+  Void test5()
+  {
+    f := tempDir + `write_test_5.xlsx`
+
+    // write
+    w := Workbook {}
+    s := w.addSheet("Sales & Returns")
+    s.updateCell("A1", "Tom & Jerry")
+    s.updateCell("B1", "x < y")
+    s.updateCell("C1", "a > b")
+    s.updateCell("A2", "she said \"hi\"")
+    s.updateCell("B2", "it's fine")
+    XlsWriter(w).write(f.out)
+
+    // read back
+    r := XlsReader.read(f)
+    rs := r.sheet("Sales & Returns")
+    verifyNotNull(rs)
+    verifyEq(rs.row(0).joinCells(";"), "Tom & Jerry;x < y;a > b")
+    verifyEq(rs.row(1).cell(0).val, "she said \"hi\"")
+    verifyEq(rs.row(1).cell(1).val, "it's fine")
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// test6
+//////////////////////////////////////////////////////////////////////////
+
+  // -- Many columns past Z (AA, AB, etc.)
+  Void test6()
+  {
+    f := tempDir + `write_test_6.xlsx`
+
+    // write 30 columns
+    w := Workbook {}
+    s := w.addSheet("Wide")
+    30.times |i|
+    {
+      col := Util.colIndexToRef(i)
+      s.updateCell("${col}1", "c${i}")
+    }
+    XlsWriter(w).write(f.out)
+
+    // read back
+    r := XlsReader.read(f)
+    rs := r.sheet("Wide")
+    verifyEq(rs.numCols, 30)
+    verifyEq(rs.row(0).cell(0).val,  "c0")   // A
+    verifyEq(rs.row(0).cell(25).val, "c25")  // Z
+    verifyEq(rs.row(0).cell(26).val, "c26")  // AA
+    verifyEq(rs.row(0).cell(27).val, "c27")  // AB
+    verifyEq(rs.row(0).cell(29).val, "c29")  // AD
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// test7
+//////////////////////////////////////////////////////////////////////////
+
+  // -- Sparse data round-trip
+  Void test7()
+  {
+    f := tempDir + `write_test_7.xlsx`
+
+    // write with gaps: A1, C1, F1 (skip B, D, E)
+    w := Workbook {}
+    s := w.addSheet("Sparse")
+    s.updateCell("A1", "one")
+    s.updateCell("C1", "three")
+    s.updateCell("F1", "six")
+    // row 3 with no row 2 data
+    s.updateCell("B3", "mid")
+    XlsWriter(w).write(f.out)
+
+    // read back
+    r := XlsReader.read(f)
+    rs := r.sheet("Sparse")
+    verifyEq(rs.row(0).cell(0).val, "one")
+    verifyEq(rs.row(0).cell(1).val, "")
+    verifyEq(rs.row(0).cell(2).val, "three")
+    verifyEq(rs.row(0).cell(3).val, "")
+    verifyEq(rs.row(0).cell(4).val, "")
+    verifyEq(rs.row(0).cell(5).val, "six")
+  }
+
+//////////////////////////////////////////////////////////////////////////
 // Support
 //////////////////////////////////////////////////////////////////////////
 

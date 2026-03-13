@@ -63,6 +63,33 @@ class SheetCellTest : Test
     c := SheetCell { it.val=val }
     verifyEq(c.datetime, dt)
   }
+
+//////////////////////////////////////////////////////////////////////////
+// Float
+//////////////////////////////////////////////////////////////////////////
+
+  Void testFloat()
+  {
+    verifyEq(SheetCell { it.val="42" }.float,    42f)
+    verifyEq(SheetCell { it.val="3.14" }.float,  3.14f)
+    verifyEq(SheetCell { it.val="0" }.float,     0f)
+    verifyEq(SheetCell { it.val="-1.5" }.float, -1.5f)
+
+    // empty cell returns null
+    verifyEq(SheetCell { it.val="" }.float, null)
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// Empty Cell
+//////////////////////////////////////////////////////////////////////////
+
+  Void testEmptyCell()
+  {
+    c := SheetCell { it.val="" }
+    verifyEq(c.float, null)
+    verifyEq(c.time, null)
+    verifyEq(c.datetime, null)
+  }
 }
 
 

@@ -35,6 +35,36 @@ class CsvWorkbookTest : Test
   }
 
 //////////////////////////////////////////////////////////////////////////
+// test2
+//////////////////////////////////////////////////////////////////////////
+
+  // -- CSV export round-trip
+  Void test2()
+  {
+    wb := Fanxl.read(getTestFile("test_1.csv"))
+    sh := wb.sheet
+
+    // export to csv string
+    csv := sh.toCsvStr
+
+    // read back
+    f := tempDir + `export_test.csv`
+    f.out.print(csv).close
+    wb2 := Fanxl.read(f)
+    sh2 := wb2.sheet
+
+    verifyEq(sh2.numRows, 10)
+    sh2.eachRow |row,ri|
+    {
+      verifyEq(row.size, 6)
+      row.eachCell |cell,ci|
+      {
+        verifyEq(cell.val, "${ci},${ri}")
+      }
+    }
+  }
+
+//////////////////////////////////////////////////////////////////////////
 // Support
 //////////////////////////////////////////////////////////////////////////
 
