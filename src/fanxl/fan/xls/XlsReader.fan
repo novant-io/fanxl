@@ -25,8 +25,8 @@ internal class XlsReader
 
       zip = Zip.open(file)
       readSharedStrings(zip, sst)
-      readWorkbook(zip, book)
-      readSheets(zip, book, sst)
+      sheetFiles := readWorkbook(zip, book)
+      readSheets(zip, book, sst, sheetFiles)
 
       return book
     }
@@ -68,43 +68,59 @@ internal class XlsReader
     }
   }
 
-  ** Parse 'workbook.xml`
-  private static Void readWorkbook(Zip zip, Workbook book)
+  ** Parse 'workbook.xml' and return map of sheetId to sheet file path.
+  private static Int:Str readWorkbook(Zip zip, Workbook book)
   {
+    // read workbook rels to map rId -> target path
+    rels := Str:Str[:]
+    relsFile := zip.contents[`/xl/_rels/workbook.xml.rels`]
+    if (relsFile != null)
+    {
+      rdoc := XParser(relsFile.in).parseDoc
+      rdoc.root.elems.each |r|
+      {
+        id     := r.attr("Id", false)?.val
+        target := r.attr("Target", false)?.val
+        if (id != null && target != null) rels[id] = target
+      }
+    }
+
+    // read workbook
     file := zip.contents[`/xl/workbook.xml`]
     doc  := XParser(file.in).parseDoc
     root := doc.root
-    // dump(root)
 
+    sheetFiles := Int:Str[:]
     sheets := root.elems.find |k| { k.name == "sheets" }
     sheets.elems.each |x|
     {
+      sheetId := x.attr("sheetId").val.toInt
+
       book._addSheet(Sheet {
-        // it.relId   = x.attr("id").val
-        // it.sheetId = x.attr("sheetId").val
         it.name    = x.attr("name").val
-        it.id      = x.attr("sheetId").val.toInt
+        it.id      = sheetId
         it.state   = x.attr("state", false)?.val ?: "visible"
       })
+
+      // resolve sheet file path via r:id -> rels
+      rId := x.attr("id", false)?.val
+      if (rId != null && rels.containsKey(rId))
+        sheetFiles[sheetId] = "/xl/" + rels[rId]
     }
+
+    return sheetFiles
   }
 
-  ** Read all `sheet<x>.xml` files.
-  private static Void readSheets(Zip zip, Workbook book, Int:Str sst)
+  ** Read sheet data using resolved file mappings.
+  private static Void readSheets(Zip zip, Workbook book, Int:Str sst, Int:Str sheetFiles)
   {
-    zip.contents.each |file|
+    sheetFiles.each |path, sheetId|
     {
-      if (file.name.startsWith("sheet") && file.ext == "xml")
-      {
-// TODO FIXIT -> this will not work!  We need to load workbook.xml.refs to find rId:sheet<x>.xml
-// <Relationship Id="rId3" Target="worksheets/sheet3.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>
-        sheetId := file.name[5..-5].toInt
-        sheet   := book._sheetById(sheetId)
-        //if (sheet == null) throw ArgErr("Sheet not found '${sheetId}'")
-// TODO
-if (sheet == null) return
-        readSheet(file, sheet, sst)
-      }
+      sheet := book._sheetById(sheetId)
+      if (sheet == null) return
+      file := zip.contents[path.toUri]
+      if (file == null) return
+      readSheet(file, sheet, sst)
     }
   }
 
@@ -115,11 +131,25 @@ if (sheet == null) return
     root := doc.root
 
     data := root.elems.find |e| { e.name == "sheetData" }
+    lastRowNum := 0
     data.elems.each |xr,i|
     {
+      rowNum := xr.attr("r").val.toInt
+
+      // backfill sparse/missing rows
+      while (rowNum > lastRowNum + 1)
+      {
+        lastRowNum++
+        sheet._addRow(SheetRow {
+          it.sheet = sheet
+          it.index = lastRowNum
+        })
+      }
+      lastRowNum = rowNum
+
       row := SheetRow {
         it.sheet = sheet
-        it.index = xr.attr("r").val.toInt
+        it.index = rowNum
       }
       // track last cix to backfill sparse cells
       lastcix := -1
