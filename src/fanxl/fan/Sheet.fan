@@ -7,7 +7,6 @@
 //
 
 using util
-using xml
 
 **
 ** Sheet models a single worksheet in a 'Workbook'.
