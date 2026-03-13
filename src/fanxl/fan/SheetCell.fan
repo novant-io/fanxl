@@ -42,6 +42,7 @@ using xml
   DateTime? datetime(TimeZone tz := TimeZone.utc)
   {
     if (val.isEmpty) return null
+    // 39448 is the Excel serial date number for 2008-01-01
     ser   := val.toFloat - 39448f
     orig  := Date(2008, Month.jan, 1).midnight(tz)
     days  := Duration("${ser}day")
@@ -54,7 +55,7 @@ using xml
 
   private Int correctTicks(Int orig)
   {
-    // this convesion introduces some rounding errors
+    // this conversion introduces some rounding errors
     // at the nanosecond level, so round to nearest
     // whole second
     floor := (orig / oneSecTicks) * oneSecTicks

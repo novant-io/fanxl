@@ -27,7 +27,7 @@ using xml
   Int numSheets() { sheets.size }
 
   ** Get sheet with given 'name' or 'null' if none found, or if
-  ** no name is provied, return the first sheet in thsi workbook.
+  ** no name is provided, return the first sheet in this workbook.
   Sheet? sheet(Str? name := null)
   {
     name == null

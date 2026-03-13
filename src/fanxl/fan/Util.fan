@@ -11,6 +11,7 @@
   ** Parse a Str reference such as 'C12' to the zero-based column index '2'.
   static Int cellRefToColIndex(Str ref)
   {
+    if (ref.isEmpty || !ref[0].isAlpha) throw ArgErr("Invalid cell ref: $ref")
     cix := 0
     pos := 0
     while (ref[pos].isAlpha)
@@ -27,6 +28,7 @@
   ** Parse a Str reference such as 'C12' to the zero-based row index '11'.
   static Int cellRefToRowIndex(Str ref)
   {
+    if (ref.isEmpty || !ref[0].isAlpha) throw ArgErr("Invalid cell ref: $ref")
     pos := 0
     while (ref[pos].isAlpha) pos++
     return ref[pos..-1].toInt - 1

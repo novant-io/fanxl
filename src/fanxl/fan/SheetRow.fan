@@ -75,8 +75,7 @@ using xml
     }
   }
 
-  ** A row is empty if `cells` is empty for every value
-  ** for `cells` is empty.
+  ** Return 'true' if every cell value in this row is empty.
   Bool isEmpty()
   {
     if (cells.isEmpty) return true

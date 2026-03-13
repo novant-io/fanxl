@@ -51,7 +51,7 @@ using xml
     cwidths[col] ?: 10
   }
 
-  ** Set the given column width by reference (ex: "A")
+  ** Set the given column width by index.
   @NoDoc Void setColWidth(Int col, Int width)
   {
     cwidths[col] = width

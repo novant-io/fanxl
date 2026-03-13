@@ -27,7 +27,7 @@ using util
         it.id      = 1
       }
 
-      // open file and interate rows
+      // open file and iterate rows
       rnum := 1
       in = CsvInStream(file.in)
       in.eachRow |vals|
