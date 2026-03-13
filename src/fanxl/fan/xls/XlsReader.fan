@@ -47,7 +47,12 @@ internal class XlsReader
     root.elems.each |k,i|
     {
       first := k.elems.first
-      if (first.name == "t")
+      if (first == null)
+      {
+        // empty <si/> entry
+        sst.add(i, "")
+      }
+      else if (first.name == "t")
       {
         // simple string: <si><t>text</t></si>
         s := first.children.first as XText
@@ -131,10 +136,11 @@ internal class XlsReader
     root := doc.root
 
     data := root.elems.find |e| { e.name == "sheetData" }
+    if (data == null) return
     lastRowNum := 0
     data.elems.each |xr,i|
     {
-      rowNum := xr.attr("r").val.toInt
+      rowNum := xr.attr("r", false)?.val?.toInt ?: (lastRowNum + 1)
 
       // backfill sparse/missing rows
       while (rowNum > lastRowNum + 1)
@@ -155,11 +161,11 @@ internal class XlsReader
       lastcix := -1
       xr.elems.each |xc|
       {
-        ref  := xc.attr("r").val
+        ref  := xc.attr("r", false)?.val
         type := xc.attr("t", false)?.val
 
         // backfill empty/sparse columns if needed
-        cix  := Util.cellRefToColIndex(ref)
+        cix  := ref != null ? Util.cellRefToColIndex(ref) : lastcix + 1
         miss := cix - lastcix
         while (miss-- > 1) row._addCell(SheetCell { it.val="" })
         lastcix = cix
