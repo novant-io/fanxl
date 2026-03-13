@@ -243,6 +243,121 @@ class XlsWorkbookTest : Test
   }
 
 //////////////////////////////////////////////////////////////////////////
+// test8
+//////////////////////////////////////////////////////////////////////////
+
+  // -- Reader handles rows and cells with missing r attributes
+  Void test8()
+  {
+    f := tempDir + `reader_test_8.xlsx`
+    sheetXml :=
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">
+        <sheetData>
+          <row>
+            <c t=\"inlineStr\"><is><t>A</t></is></c>
+            <c t=\"inlineStr\"><is><t>B</t></is></c>
+            <c t=\"inlineStr\"><is><t>C</t></is></c>
+          </row>
+          <row>
+            <c t=\"inlineStr\"><is><t>D</t></is></c>
+            <c t=\"inlineStr\"><is><t>E</t></is></c>
+          </row>
+        </sheetData>
+      </worksheet>"
+    writeTestXlsx(f, sheetXml)
+
+    r := XlsReader.read(f)
+    sh := r.sheet
+    verifyEq(sh.numRows, 2)
+    verifyEq(sh.row(0).joinCells(";"), "A;B;C")
+    verifyEq(sh.row(1).joinCells(";"), "D;E")
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// test9
+//////////////////////////////////////////////////////////////////////////
+
+  // -- Reader handles boolean cells
+  Void test9()
+  {
+    f := tempDir + `reader_test_9.xlsx`
+    sheetXml :=
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">
+        <sheetData>
+          <row r=\"1\">
+            <c r=\"A1\" t=\"b\"><v>1</v></c>
+            <c r=\"B1\" t=\"b\"><v>0</v></c>
+            <c r=\"C1\" t=\"inlineStr\"><is><t>text</t></is></c>
+          </row>
+        </sheetData>
+      </worksheet>"
+    writeTestXlsx(f, sheetXml)
+
+    r := XlsReader.read(f)
+    sh := r.sheet
+    verifyEq(sh.numRows, 1)
+    verifyEq(sh.row(0).cell(0).val, "true")
+    verifyEq(sh.row(0).cell(1).val, "false")
+    verifyEq(sh.row(0).cell(2).val, "text")
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// test10
+//////////////////////////////////////////////////////////////////////////
+
+  // -- Reader handles sheet with no sheetData element
+  Void test10()
+  {
+    f := tempDir + `reader_test_10.xlsx`
+    sheetXml :=
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">
+      </worksheet>"
+    writeTestXlsx(f, sheetXml)
+
+    r := XlsReader.read(f)
+    sh := r.sheet
+    verifyEq(sh.numRows, 0)
+  }
+
+//////////////////////////////////////////////////////////////////////////
+// test11
+//////////////////////////////////////////////////////////////////////////
+
+  // -- Reader handles empty shared string entries
+  Void test11()
+  {
+    f := tempDir + `reader_test_11.xlsx`
+    sheetXml :=
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">
+        <sheetData>
+          <row r=\"1\">
+            <c r=\"A1\" t=\"s\"><v>0</v></c>
+            <c r=\"B1\" t=\"s\"><v>1</v></c>
+            <c r=\"C1\" t=\"s\"><v>2</v></c>
+          </row>
+        </sheetData>
+      </worksheet>"
+    sstXml :=
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">
+        <si><t>hello</t></si>
+        <si/>
+        <si><t>world</t></si>
+      </sst>"
+    writeTestXlsx(f, sheetXml, sstXml)
+
+    r := XlsReader.read(f)
+    sh := r.sheet
+    verifyEq(sh.row(0).cell(0).val, "hello")
+    verifyEq(sh.row(0).cell(1).val, "")
+    verifyEq(sh.row(0).cell(2).val, "world")
+  }
+
+//////////////////////////////////////////////////////////////////////////
 // Support
 //////////////////////////////////////////////////////////////////////////
 
@@ -251,6 +366,48 @@ class XlsWorkbookTest : Test
     file := Env.cur.workDir + `src/fanxl/test-xls/${name}`
     if (!file.exists) throw IOErr("File not found: ${file.osPath}")
     return file
+  }
+
+  ** Write a minimal XLSX file with custom sheet and optional shared strings XML.
+  private Void writeTestXlsx(File f, Str sheetXml, Str? sstXml := null)
+  {
+    zip := Zip.write(f.out)
+
+    // workbook.xml
+    out := zip.writeNext(`/xl/workbook.xml`)
+    out.printLine(
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"
+                xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">
+        <sheets>
+          <sheet name=\"Sheet1\" sheetId=\"1\" r:id=\"rId1\"/>
+        </sheets>
+      </workbook>")
+    out.close
+
+    // workbook.xml.rels
+    out = zip.writeNext(`/xl/_rels/workbook.xml.rels`)
+    out.printLine(
+     "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
+      <Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">
+        <Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet1.xml\"/>
+      </Relationships>")
+    out.close
+
+    // sheet1.xml
+    out = zip.writeNext(`/xl/worksheets/sheet1.xml`)
+    out.printLine(sheetXml)
+    out.close
+
+    // optional shared strings
+    if (sstXml != null)
+    {
+      out = zip.writeNext(`/xl/sharedStrings.xml`)
+      out.printLine(sstXml)
+      out.close
+    }
+
+    zip.close
   }
 }
 

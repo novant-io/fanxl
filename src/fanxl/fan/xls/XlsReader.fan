@@ -180,6 +180,12 @@ internal class XlsReader
             cell := SheetCell { it.val=val }
             row._addCell(cell)
 
+          case "b":
+            // boolean: <v>0</v> or <v>1</v>
+            bval := xc.elems.first?.text?.val
+            cell := SheetCell { it.val = bval == "1" ? "true" : "false" }
+            row._addCell(cell)
+
           case "inlineStr":
             // inline string: <is><t>value</t></is>
             val  := xc.elems.first?.elems?.first?.text?.val ?: ""
