@@ -17,7 +17,7 @@ using xml
   ** Read the given file and return a `Workbook` instance.
   static Workbook read(File file)
   {
-    switch (file.ext.lower)
+    switch (file.ext?.lower)
     {
       case "csv": return CsvReader.read(file)
       default:    return XlsReader.read(file)

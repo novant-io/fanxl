@@ -55,11 +55,7 @@ using xml
   Void updateCell(Int col, Str val)
   {
     // backfill missing cells
-    while (col >= cells.size)
-    {
-      ix := cells.size
-      cells.add(SheetCell {})
-    }
+    while (col >= cells.size) cells.add(SheetCell {})
 
     // update
     cells[col].val = val
@@ -84,7 +80,7 @@ using xml
   Bool isEmpty()
   {
     if (cells.isEmpty) return true
-    return cells.all |c| { c.val === "" }
+    return cells.all |c| { c.val.isEmpty }
   }
 
   ** Map this row to a 'Str:Str?' map where the map keys are
