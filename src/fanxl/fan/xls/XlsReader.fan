@@ -136,79 +136,136 @@ internal class XlsReader
   ** Parse 'sheet<x>.xml`
   private static Void readSheet(File file, Sheet sheet, Int:Str sst)
   {
-    doc  := XParser(file.in).parseDoc
-    root := doc.root
+    xml := file.readAllStr
 
-    data := root.elems.find |e| { e.name == "sheetData" }
-    if (data == null) return
+    // extract <worksheet ...> opening tag to preserve namespace declarations
+    wsStart := xml.index("<worksheet")
+    if (wsStart == null) return
+    wsGt := xml.index(">", wsStart)
+    wsTag := xml[wsStart..wsGt]
+    if (wsTag.endsWith("/")) return  // degenerate self-closing worksheet
+    wsSuffix := "</worksheet>"
+
+    // find <sheetData> section
+    sdStart := xml.index("<sheetData")
+    if (sdStart == null) return
+    sdGt := xml.index(">", sdStart)
+    if (xml[sdGt-1] == '/') return  // self-closing <sheetData/>
+    sdEnd := xml.index("</sheetData>")
+    if (sdEnd == null) return
+
+    pos := sdGt + 1
     lastRowNum := 0
-    data.elems.each |xr,i|
+
+    while (pos < sdEnd)
     {
-      rowNum := xr.attr("r", false)?.val?.toInt ?: (lastRowNum + 1)
-      if (rowNum > maxRows) throw ParseErr("Row $rowNum exceeds max ($maxRows)")
+      // find next <row element
+      rs := xml.index("<row", pos)
+      if (rs == null || rs >= sdEnd) break
 
-      // backfill sparse/missing rows
-      while (rowNum > lastRowNum + 1)
+      // verify tag name boundary (not <rowBreaks etc.)
+      nc := xml[rs + 4]
+      if (nc != ' ' && nc != '>' && nc != '/')
       {
-        lastRowNum++
-        sheet._addRow(SheetRow {
-          it.sheet = sheet
-          it.index = lastRowNum
-        })
+        pos = rs + 4
+        continue
       }
-      lastRowNum = rowNum
 
-      row := SheetRow {
-        it.sheet = sheet
-        it.index = rowNum
-      }
-      // track last cix to backfill sparse cells
-      lastcix := -1
-      xr.elems.each |xc|
+      // find close of this element
+      gt := xml.index(">", rs)
+      if (xml[gt-1] == '/')
       {
-        ref  := xc.attr("r", false)?.val
-        type := xc.attr("t", false)?.val
-
-        // backfill empty/sparse columns if needed
-        cix  := ref != null ? Util.cellRefToColIndex(ref) : lastcix + 1
-        if (cix >= maxCols) throw ParseErr("Column $cix exceeds max ($maxCols)")
-        miss := cix - lastcix
-        while (miss-- > 1) row._addCell(SheetCell { it.val="" })
-        lastcix = cix
-
-        // read value based on type
-        switch (type)
+        // self-closing <row ... /> (empty row)
+        rowXml := wsTag + xml[rs..gt] + wsSuffix
+        pos = gt + 1
+        xr := XParser(rowXml.in).parseDoc.root.elems.first
+        rowNum := xr.attr("r", false)?.val?.toInt ?: (lastRowNum + 1)
+        if (rowNum > maxRows) throw ParseErr("Row $rowNum exceeds max ($maxRows)")
+        while (rowNum > lastRowNum + 1)
         {
-          case "s":
-            // shared string
-            sid  := xc.elems.first.text.val.toInt
-            val  := sst[sid] ?: "" // TODO
-            cell := SheetCell { it.val=val }
-            row._addCell(cell)
-
-          case "b":
-            // boolean: <v>0</v> or <v>1</v>
-            bval := xc.elems.first?.text?.val
-            cell := SheetCell { it.val = bval == "1" ? "true" : "false" }
-            row._addCell(cell)
-
-          case "inlineStr":
-            // inline string: <is><t>value</t></is>
-            val  := xc.elems.first?.elems?.first?.text?.val ?: ""
-            cell := SheetCell { it.val=val }
-            row._addCell(cell)
-
-          default:
-            val  := xc.elems.first?.text?.val ?: ""
-            cell := SheetCell { it.val=val }
-            row._addCell(cell)
+          lastRowNum++
+          sheet._addRow(SheetRow { it.sheet = sheet; it.index = lastRowNum })
         }
+        lastRowNum = rowNum
+        sheet._addRow(SheetRow { it.sheet = sheet; it.index = rowNum })
+        continue
       }
 
-      sheet._addRow(row)
+      // find </row> closing tag
+      re := xml.index("</row>", gt)
+      if (re == null) break
+      re += 6
+
+      // wrap row in worksheet tag to preserve namespace declarations
+      rowXml := wsTag + xml[rs..<re] + wsSuffix
+      pos = re
+      xr := XParser(rowXml.in).parseDoc.root.elems.first
+      readRow(xr, sheet, sst, lastRowNum) |newLast| { lastRowNum = newLast }
     }
 
     // trim trailing empty rows
     sheet.trim
+  }
+
+  ** Process a parsed row element into sheet data.
+  private static Void readRow(XElem xr, Sheet sheet, Int:Str sst,
+                              Int lastRowNum, |Int| updateLast)
+  {
+    rowNum := xr.attr("r", false)?.val?.toInt ?: (lastRowNum + 1)
+    if (rowNum > maxRows) throw ParseErr("Row $rowNum exceeds max ($maxRows)")
+
+    // backfill sparse/missing rows
+    cur := lastRowNum
+    while (rowNum > cur + 1)
+    {
+      cur++
+      sheet._addRow(SheetRow { it.sheet = sheet; it.index = cur })
+    }
+    updateLast(rowNum)
+
+    row := SheetRow {
+      it.sheet = sheet
+      it.index = rowNum
+    }
+    // track last cix to backfill sparse cells
+    lastcix := -1
+    xr.elems.each |xc|
+    {
+      ref  := xc.attr("r", false)?.val
+      type := xc.attr("t", false)?.val
+
+      // backfill empty/sparse columns if needed
+      cix  := ref != null ? Util.cellRefToColIndex(ref) : lastcix + 1
+      if (cix >= maxCols) throw ParseErr("Column $cix exceeds max ($maxCols)")
+      miss := cix - lastcix
+      while (miss-- > 1) row._addCell(SheetCell { it.val="" })
+      lastcix = cix
+
+      // read value based on type
+      switch (type)
+      {
+        case "s":
+          // shared string
+          sid  := xc.elems.first.text.val.toInt
+          val  := sst[sid] ?: ""
+          row._addCell(SheetCell { it.val=val })
+
+        case "b":
+          // boolean: <v>0</v> or <v>1</v>
+          bval := xc.elems.first?.text?.val
+          row._addCell(SheetCell { it.val = bval == "1" ? "true" : "false" })
+
+        case "inlineStr":
+          // inline string: <is><t>value</t></is>
+          val  := xc.elems.first?.elems?.first?.text?.val ?: ""
+          row._addCell(SheetCell { it.val=val })
+
+        default:
+          val  := xc.elems.first?.text?.val ?: ""
+          row._addCell(SheetCell { it.val=val })
+      }
+    }
+
+    sheet._addRow(row)
   }
 }
