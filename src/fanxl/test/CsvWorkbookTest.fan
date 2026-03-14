@@ -65,6 +65,36 @@ class CsvWorkbookTest : Test
   }
 
 //////////////////////////////////////////////////////////////////////////
+// test3
+//////////////////////////////////////////////////////////////////////////
+
+  // -- CSV round-trip should not produce trailing empty columns
+  Void test3()
+  {
+    // build a sheet with jagged rows
+    w := Workbook {}
+    s := w.addSheet("Test")
+    s.updateCell("A1", "Name")
+    s.updateCell("B1", "Age")
+    s.updateCell("C1", "City")
+    s.updateCell("A2", "Alice")
+    s.updateCell("B2", "30")
+    // row 2 has no C column
+
+    // write to CSV and read back
+    f := tempDir + `csv_trailing_test.csv`
+    out := f.out
+    CsvWriter.write(s, out)
+    out.close
+
+    // read back and verify no empty column names
+    wb := Fanxl.read(f)
+    sh := wb.sheet
+    verifyEq(sh.numRows, 2)
+    sh.row(0).eachCell |c| { verify(!c.val.isEmpty) }
+  }
+
+//////////////////////////////////////////////////////////////////////////
 // Support
 //////////////////////////////////////////////////////////////////////////
 
