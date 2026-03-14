@@ -187,12 +187,7 @@ using util
   ** Export this sheet content to CSV on the given output stream.
   Void toCsv(OutStream out)
   {
-    csv := CsvOutStream(out)
-    this.rows.each |r|
-    {
-      row := r.mapCells |c| { c.val }
-      csv.writeRow(row)
-    }
+    CsvWriter.write(this, out)
   }
 
   ** Trim trailing empty rows.

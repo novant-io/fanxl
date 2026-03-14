@@ -29,4 +29,11 @@ using xml
   {
     XlsWriter(wb).write(out)
   }
+
+  ** Convenience to write the first sheet of the given workbook
+  ** in CSV format to the output stream.  See `Sheet.toCsv`.
+  static Void writeCsv(Workbook wb, OutStream out)
+  {
+    CsvWriter.write(wb.sheet, out)
+  }
 }
